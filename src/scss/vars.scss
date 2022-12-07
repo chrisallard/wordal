@@ -1,0 +1,29 @@
+$screen-max-width: 600px;
+$xs-screen-width: 300px;
+
+$tile-height: 75px;
+$tile-width: 75px;
+
+$sm-tile-height: 50px;
+$sm-tile-width: 50px;
+
+$xs-tile-height: 40px;
+$xs-tile-width: 40px;
+
+$main-bg: #143642;
+
+$color-font-base: #000;
+$tile-bkg: #fff;
+$tile-incorrect: #b1b3b1;
+$tile-correct: #6aaa64;
+$tile-border: $tile-correct;
+$tile-partially-correct: #ec9a29;
+
+$letter-full-unchecked: #333;
+$letter-full-checked: $tile-bkg;
+$letter-empty-unchecked: #ccc;
+
+$outline-focus: $tile-partially-correct;
+$tap-outline: rgba(0, 0, 0, 0.3);
+
+$btn-bg: #6864aa;

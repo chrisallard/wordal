@@ -1,0 +1,46 @@
+@import "vars";
+
+@keyframes borderPulsate {
+  0% {
+    border-color: rgba($tile-border, 1);
+  }
+  50% {
+    border-color: rgba($main-bg, 0);
+  }
+  100% {
+    border-color: rgba($tile-border, 1);
+  }
+}
+
+/*
+ * Modified from animate.style's (https://animate.style/) "tada" animation.  
+ * In this way we front load the animation, so we can use the animation timing function (e.g. 10s)
+ * to set an interval between iterations
+*/
+@keyframes delayedTada {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+
+  1%,
+  2% {
+    transform: scale3d(0.8, 0.8, 0.8) rotate3d(0, 0, 1, -2deg);
+  }
+
+  3%,
+  5%,
+  7%,
+  9% {
+    transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, 2deg);
+  }
+
+  4%,
+  6%,
+  8% {
+    transform: scale3d(1, 1, 1) rotate3d(0, 0, 1, -2deg);
+  }
+
+  10% {
+    transform: scale3d(1, 1, 1);
+  }
+}

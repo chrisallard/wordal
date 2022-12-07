@@ -1,0 +1,9 @@
+<ng-container *ngFor="let rows of keyboardRows; let k = index">
+  <div class="key-row">
+    <app-keyboard-btn
+      *ngFor="let key of rows"
+      (press)="keyPress.emit(key.value)"
+      [key]="key"
+    ></app-keyboard-btn>
+  </div>
+</ng-container>
