@@ -1,0 +1,24 @@
+<div class="modal-content" [attr.aria-label]="label" trapFocus>
+  <div class="modal-header">
+    <div class="modal-close-container">
+      <button
+        aria-label="Close Modal"
+        class="modal-close-btn material-symbols-outlined"
+        type="button"
+        (click)="close.emit()"
+      >
+        cancel
+      </button>
+    </div>
+
+    <div class="title-container">
+      <h1 class="title">
+        {{ modalTitle }}
+      </h1>
+      <p class="tagline">
+        {{ tagline }}
+      </p>
+    </div>
+  </div>
+  <ng-content></ng-content>
+</div>

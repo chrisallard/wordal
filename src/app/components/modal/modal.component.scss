@@ -1,0 +1,29 @@
+@import "vars";
+
+.modal-content {
+  background-color: $color-white;
+  border-radius: $border-radius;
+  box-shadow: $color-light-blue 0 0 20px 10px;
+  display: inline-block;
+  margin: 20px auto;
+  max-width: $container-max-width;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+  transition: opacity 400ms ease-in-out;
+  width: 100%;
+  will-change: opacity;
+}
+
+.title-container {
+  padding: 0 20px 20px;
+  text-align: center;
+}
+
+.title {
+  font-size: 24px;
+}
+
+.tagline {
+  font-size: 18px;
+}

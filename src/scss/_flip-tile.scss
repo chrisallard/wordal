@@ -1,0 +1,32 @@
+@import "vars";
+
+.flip-tile {
+  background-color: transparent;
+  perspective: 1000px;
+}
+
+.flip-tile-inner {
+  height: 100%;
+  position: relative;
+  text-align: center;
+  transform-style: preserve-3d;
+  transition: transform;
+  width: 100%;
+}
+
+.flip-tile-front,
+.flip-tile-back {
+  backface-visibility: hidden;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+
+.flip-tile-front {
+  background: $color-grey-600;
+  transition: color 0.25s;
+}
+
+.flip-tile-back {
+  transform: rotateX(180deg);
+}

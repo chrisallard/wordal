@@ -1,0 +1,85 @@
+@import "vars";
+
+$cursor-height: 4vh;
+
+.flip-tile {
+  height: $btn-height-fluid;
+  width: $btn-height-fluid;
+  border: 1vh solid transparent;
+
+  @media (max-width: $xs-screen-width) {
+    height: $btn-height-fluid - 1;
+    width: $btn-height-fluid - 1;
+  }
+}
+
+.cursor {
+  animation: pulseCursor 0.75s ease-in-out infinite;
+  border: 1px solid;
+  height: $cursor-height;
+  width: $cursor-height;
+
+  @media (max-width: $xs-screen-width) {
+    height: $cursor-height - 1;
+    width: $cursor-height - 1;
+  }
+}
+
+@keyframes pulseCursor {
+  0% {
+    border-left-color: $color-grey-600;
+  }
+  100% {
+    border-left-color: $color-white;
+  }
+}
+
+.flip-tile-front {
+  color: $color-grey-600;
+  border: 1px solid $color-grey-400;
+
+  &.tile-filled {
+    background: $color-grey-600;
+
+    .letter {
+      animation: bounceIn 0.5s;
+      color: $color-white;
+    }
+  }
+}
+
+.tile {
+  align-items: center;
+  display: flex;
+  font-size: 4vh;
+  height: 100%;
+  justify-content: center;
+  text-transform: uppercase;
+  transform-origin: center bottom;
+  user-select: none;
+  width: 100%;
+
+  @media (max-width: $xs-screen-width) {
+    font-size: 3vh;
+  }
+}
+
+.flip-tile-back {
+  .tile {
+    .letter {
+      color: $color-white;
+    }
+
+    &.absent {
+      background: $color-absent;
+    }
+
+    &.present {
+      background: $color-present;
+    }
+
+    &.correct {
+      background: $color-correct;
+    }
+  }
+}

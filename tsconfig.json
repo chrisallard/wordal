@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
@@ -16,7 +16,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2017",
+    "target": "es2020",
     "module": "es2020",
     "allowSyntheticDefaultImports": true,
     "lib": ["es2020", "dom"],
@@ -24,10 +24,12 @@
       "@app/*": ["src/app/*"],
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/app/components/*"],
-      "@services/*": ["src/app/services/*"],
-      "@pipes/*": ["src/app/pipes/*"],
       "@directives/*": ["src/app/directives/*"],
-      "@interceptors/*": ["src/app/interceptors/*"]
+      "@interceptors/*": ["src/app/interceptors/*"],
+      "@pipes/*": ["src/app/pipes/*"],
+      "@services/*": ["src/app/services/*"],
+      "@ts/*": ["src/app/ts/*"],
+      "@utils/*": ["src/app/utils/*"]
     }
   },
   "angularCompilerOptions": {

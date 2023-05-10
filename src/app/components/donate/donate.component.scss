@@ -1,0 +1,54 @@
+@import "vars";
+
+.donation-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.btn-no-thanks,
+.donation-link {
+  transition: all 0.25s;
+}
+
+.donation-link {
+  align-items: center;
+  background: $color-green;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  color: $color-white;
+  display: flex;
+  height: $btn-height-fixed;
+  justify-content: center;
+  margin: 20px auto 0;
+  min-width: 185px;
+  padding: 0 10px;
+  text-decoration: none;
+  width: 50%;
+
+  &:active,
+  &:hover {
+    background: darken($color-green, 10%);
+  }
+
+  .coffee-icon {
+    border-left: 1px solid $color-white;
+    margin: -2px 0 0 0;
+    padding: 0 10px;
+  }
+
+  .label {
+    flex: 1;
+  }
+}
+
+.btn-no-thanks {
+  background: none;
+  border: none;
+  color: $color-grey-500;
+  margin-top: 20px;
+  text-decoration: underline;
+
+  &:hover {
+    color: darken($color-grey-500, 10%);
+  }
+}

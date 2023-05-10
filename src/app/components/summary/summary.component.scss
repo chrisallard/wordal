@@ -1,0 +1,65 @@
+@import "vars";
+@import "mixins";
+
+.new-game-container {
+  background: $color-grey-100;
+  margin-top: 20px;
+  padding: 40px 0;
+}
+
+.answer {
+  margin: 20px 0;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.stat-line {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.stat-value {
+  align-items: center;
+  background: $color-white;
+  border-radius: 50%;
+  border: 10px outset $color-light-blue;
+  color: $color-light-blue;
+  display: flex;
+  flex-direction: column;
+  font-size: 28px;
+  font-weight: bold;
+  height: 30px;
+  justify-content: center;
+  line-height: 1;
+  padding: 20px;
+  width: 30px;
+
+  @media (max-width: $xs-screen-width) {
+    height: 2vh;
+    width: 2vh;
+  }
+}
+
+.more-stats {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.btn-more-stats {
+  background: none;
+  border: none;
+  color: $color-black;
+  font-size: 14px;
+  text-decoration: underline;
+}

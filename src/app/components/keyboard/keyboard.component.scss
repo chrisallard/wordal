@@ -1,6 +1,50 @@
+@import "vars";
+
+.keyboard-container {
+  display: flex;
+  justify-content: center;
+  padding: 5px 5px 1vh 5px;
+  margin-top: 3vh;
+}
+
+.keyboard {
+  width: $container-max-width;
+}
+
 .key-row {
   display: flex;
   justify-content: center;
+  margin: 0 auto 8px;
   touch-action: manipulation;
-  margin-bottom: 10px;
+  width: 100%;
+
+  &:last-of-type {
+    margin-bottom: 1vh;
+  }
+}
+
+.btn {
+  display: flex;
+  flex: 1;
+  margin-right: 6px;
+
+  &:last-of-type {
+    margin-right: 0;
+  }
+}
+
+.btn-backspace {
+  flex: 1.5;
+}
+
+.btn-submit {
+  flex: 0.25;
+
+  @media screen and (max-width: $xs-screen-width) {
+    flex: 0.5;
+  }
+}
+
+.flex-spacer {
+  flex: 0.5;
 }

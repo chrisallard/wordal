@@ -1,427 +1,488 @@
 import {
-  animate,
   animateChild,
-  keyframes,
+  AnimationEvent,
   query,
   stagger,
-  state,
-  style,
   transition,
   trigger,
 } from '@angular/animations';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { LOCAL_STORAGE_KEY, ROUND_TOTAL } from '@app/app.config';
-import { ApiService } from '@services/api.service';
-import { ConfettiService } from '@services/confetti.service';
-
-interface GuessesInterface {
-  letter: null | string;
-  isCorrectlyPlaced: boolean;
-  isInAnswer: boolean;
-  isNextTurn: null | boolean;
-}
-
-interface RoundInterface {
-  guesses: GuessesInterface[];
-  hasRoundStarted: boolean;
-  isRoundComplete: boolean;
-  isPuzzleIncomplete: boolean;
-  isPuzzleSolved: boolean;
-  isWordInvalid: boolean;
-}
+import { ApplicationRef, Component, HostListener, OnInit } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
+import { getBoardClearAnimation } from '@app/animations/board-clear.animation';
+import {
+  getHeadShakeAnimation,
+  headShakeVibDuration,
+  headShakeVibPause,
+} from '@app/animations/head-shake.animation';
+import { API_TIMEOUT_DURATION } from '@app/config/app.config';
+import { GuessService } from '@app/services/guess/guess.service';
+import { PuzzleService } from '@app/services/puzzle.service';
+import {
+  GameParamsEnum,
+  ModalNameEnum,
+  NewGamePromptEnum,
+  RoundFinishTypeEnum,
+  SpecialKeysEnum,
+  ToastrMessagesEnum,
+} from '@app/ts/enums';
+import { IRound } from '@app/ts/interfaces';
+import { calcElapsedTime } from '@app/utils/calc-elapsed-time.utils';
+import { GoogleAnalyticsService } from '@services/analytics/google-analytics.service';
+import { MakeToast } from '@services/make-toast/make-toast.service';
+import { ModalService } from '@services/modal/modal.service';
+import { ProgressiveWebApp } from '@services/progressive-web-app/progressive-web-app.service';
+import { StorageService } from '@services/storage/storage.service';
+import { VerifyWordService } from '@services/verify-word/verify-word.service';
+import { getGuessState } from '@utils/get-guess-state.utils';
+import { getPristineGameModel } from '@utils/get-pristine-game-model.utils';
+import { getSuccessMessage } from '@utils/get-success-msg.utils';
+import { isModalOpen } from '@utils/is-modal-open.utils';
+import { undoLastGuess } from '@utils/undo-last-guess.utils';
+import { vibrateDevice } from '@utils/vibrate-device.utils';
+import { concat, interval, Observable, of } from 'rxjs';
+import { first } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   animations: [
+    trigger('boardClear', [
+      getBoardClearAnimation({ fromState: 'false', toState: 'true' }),
+    ]),
     trigger('roundComplete', [
-      transition(
-        '* => completed',
-        query('.flip-tile-inner', [
-          stagger('100ms', [
-            animate(
-              '500ms',
-              style({
-                transform: 'rotateX(-180deg)',
-              })
-            ),
-          ]),
-        ])
-      ),
-      transition('* => solved', [
-        query('.flip-tile-inner', [
-          stagger('100ms', [
-            animate(
-              '500ms',
-              style({
-                transform: 'rotateX(-180deg)',
-              })
-            ),
-          ]),
-        ]),
-        query('.letter', [
-          stagger('100ms', [
-            animate(
-              '1000ms',
-              keyframes([
-                style({
-                  'animation-timing-function':
-                    'cubic-bezier(0.215, 0.61, 0.355, 1)',
-                  transform: 'translate3d(0, 0, 0)',
-                  offset: 0,
-                }),
-                style({
-                  'animation-timing-function':
-                    'cubic-bezier(0.215, 0.61, 0.355, 1)',
-                  transform: 'translate3d(0, 0, 0)',
-                  offset: 0.2,
-                }),
-                style({
-                  'animation-timing-function':
-                    'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-                  transform: 'translate3d(0, -30px, 0) scaleY(1.1)',
-                  offset: 0.4,
-                }),
-                style({
-                  'animation-timing-function':
-                    'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-                  transform: 'translate3d(0, -30px, 0) scaleY(1.1)',
-                  offset: 0.43,
-                }),
-                style({
-                  'animation-timing-function':
-                    'cubic-bezier(0.215, 0.61, 0.355, 1)',
-                  transform: 'translate3d(0, 0, 0)',
-                  offset: 0.53,
-                }),
-
-                style({
-                  'animation-timing-function':
-                    'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
-                  transform: 'translate3d(0, -15px, 0) scaleY(1.05)',
-                  offset: 0.7,
-                }),
-                style({
-                  'transition-timing-function':
-                    'cubic-bezier(0.215, 0.61, 0.355, 1)',
-                  transform: 'translate3d(0, 0, 0) scaleY(0.95)',
-                  offset: 0.8,
-                }),
-                style({
-                  transform: 'translate3d(0, -4px, 0) scaleY(1.02)',
-                  offset: 0.9,
-                }),
-                style({
-                  'animation-timing-function':
-                    'cubic-bezier(0.215, 0.61, 0.355, 1)',
-                  transform: 'translate3d(0, 0, 0)',
-                  offset: 1,
-                }),
-              ])
-            ),
-          ]),
-        ]),
-      ]),
-      transition('* => *', [query('@flipTile', animateChild())]),
-    ]),
-    trigger('flipTile', [
-      // this is needed to keep the animation in the forwards position
-      state(
-        'flipped',
-        style({
-          transform: 'rotateX(-180deg)',
-        })
-      ),
-      transition('* => flipped', [
-        style({
-          transform: 'rotateX(-180deg)',
-        }),
+      transition('* => *', [
+        query('@flipTileInner', stagger('300ms', animateChild())),
+        query('@flipTile', stagger('100ms', animateChild({ delay: 250 }))),
       ]),
     ]),
-    trigger('newGame', [
-      state('true', style({ 'animation-delay': '4s' })), //game won
-      state('false', style({ 'animation-delay': '1.2s' })), // game lost
-      transition(':leave', [query('@newGameBtn', animateChild())]),
-    ]),
-    trigger('newGameBtn', [
-      transition(':leave', [
-        animate(
-          '750ms',
-          keyframes([
-            style({
-              transform: 'translate3d(20px, 0, 0) scaleX(0.9)',
-              offset: 0.2,
-            }),
-            style({
-              opacity: 0,
-              transform: 'translate3d(-2000px, 0, 0) scaleX(2)',
-              offset: 1,
-            }),
-          ])
-        ),
-      ]),
+    trigger('headShake', [
+      getHeadShakeAnimation({ fromState: 'false', toState: 'true' }),
     ]),
   ],
 })
 export class AppComponent implements OnInit {
-  private _currentRound!: RoundInterface;
-  private _currentRoundIndex = 0;
-  private _numRounds = ROUND_TOTAL;
-  private _lettersCopy: string[] = [];
-  private _letters: string[] = [];
+  private _currentRoundIndex: number = 0;
+  private _gameDuration!: string;
+  private _gameStartTime!: number;
+  private _headShakeVibPattern = [
+    headShakeVibDuration,
+    headShakeVibDuration,
+    headShakeVibPause,
+  ];
+  private _isFastestTime: boolean = false;
+  private _numLastDonationGame: number = 0;
+  private _numPlayedAllTime: number = 0;
+  private _numPlayedSession: number = 0;
+  private _numRounds: number = GameParamsEnum.NumRounds;
   private _solution: string = '';
-  private _tileSet = new Set();
 
-  game!: RoundInterface[];
-  gameWon: boolean = false;
-  gameOver: boolean = false;
-  playedTiles: any;
+  gameTime: number = 0;
+  hasWonGame: boolean = false;
+  haveTilesBounced: boolean = false;
+  isBoardLocked: boolean = true;
+  isNavOpen: boolean = false;
+  isNewVersionAvailable: boolean = false;
+  isVersionUpdated: boolean = false;
+  reload = this._pwa.reloadWindow;
+  roundFinish = RoundFinishTypeEnum;
+  rounds: IRound[] = getPristineGameModel();
+  shouldClearBoard: boolean = false;
 
   constructor(
-    private _api: ApiService,
-    private _confettiService: ConfettiService
-  ) {}
+    private _analyticsSvc: GoogleAnalyticsService,
+    private _appRef: ApplicationRef,
+    private _guessSvc: GuessService,
+    private _modalSvc: ModalService,
+    private _puzzleSvc: PuzzleService,
+    private _pwa: ProgressiveWebApp,
+    private _storageSvc: StorageService,
+    private _swUpdate: SwUpdate,
+    private _toastr: MakeToast,
+    private _verifyWordSvc: VerifyWordService
+  ) {
+    if (this._swUpdate.isEnabled) {
+      // Allow the app to stabilize first, before  polling for updates with `interval()`.
+      const appIsStable$ = _appRef.isStable.pipe(
+        first((isStable) => isStable === true)
+      );
 
-  ngOnInit(): void {
-    this.newGame();
-  }
+      const hours = 6;
+      const milliSecInMin = 3600;
+      const millisecond = 1000;
 
-  updateGuess(key: string): void {
-    key = key.toUpperCase();
+      const everySixHours$ = interval(hours * milliSecInMin * millisecond);
+      const everySixHoursOnceAppIsStable$ = concat(
+        appIsStable$,
+        everySixHours$
+      );
 
-    if (!this.gameWon && !this.gameOver) {
-      const guesses = this._currentRound.guesses;
+      everySixHoursOnceAppIsStable$.subscribe(async () => {
+        try {
+          const isUpdateAvailable = await _swUpdate.checkForUpdate();
 
-      // find the index of the first unfilled letter in active round
-      const nextGuessIndex = guesses.findIndex((x) => x.letter === null);
-
-      // solve attempt
-      if (key === 'ENTER') {
-        // no unfilled letters remain (round over)
-        if (nextGuessIndex === -1) {
-          // reset flags
-          this._currentRound.isWordInvalid = false;
-
-          // assemble solution from letter guesses
-          const solution = this._currentRound.guesses
-            .map((choice) => choice.letter)
-            .toString()
-            .replace(/,/g, '');
-
-          // is the solution in the dictionary (an actual word)
-          this._api.verifyWord(solution).subscribe({
-            next: () => {
-              // word is in dictionary
-              this._roundOver();
-            },
-            error: (err: HttpErrorResponse) => {
-              // not found in dicitionary
-              if (err.status === 404) {
-                // trigger UI animation
-                this._currentRound.isWordInvalid = true;
-              }
-              // TODO: handle other errors through an error servcie
-            },
-          });
-        } else {
-          // not enough letters
-          this._currentRound.isPuzzleIncomplete = true;
-
-          // anguler misses this change, so temp fix is to wrap it in a setTimout
-          setTimeout(() => {
-            this._currentRound.isPuzzleIncomplete = false;
-          }, 500);
-        }
-      }
-
-      if (key === 'BACKSPACE' && nextGuessIndex !== 0) {
-        this.handleBackspace();
-      }
-
-      // pressed key needs to be a letter and there needs to be guesses remaining
-      if (key.length === 1 && /[a-zA-Z]/.test(key) && nextGuessIndex !== -1) {
-        const currentChoice = guesses[nextGuessIndex];
-        this._currentRound.hasRoundStarted = true;
-        currentChoice.letter = key;
-
-        if (this._lettersCopy.includes(key)) {
-          // // // console.log(`${key} is in solution`);
-          // letter is in puzzle
-          const spentLetterPos = this._lettersCopy.lastIndexOf(key);
-          if (spentLetterPos !== -1) {
-            this._lettersCopy.splice(spentLetterPos, 1);
-            currentChoice.isInAnswer = true;
+          if (isUpdateAvailable) {
+            this.isVersionUpdated = false;
+            this.isNewVersionAvailable = true;
           }
+        } catch (error) {
+          console.error('Failed to check for updates: ', error);
         }
-
-        if (this._letters[nextGuessIndex] === key) {
-          // correcrt letter in the corrrect place
-          currentChoice.isCorrectlyPlaced = true;
-          // // // console.log(`${key} is correctly placed`);
-          // if this letter is now gone from the puzzle
-          if (this._lettersCopy.lastIndexOf(key) === -1) {
-            // look for previously misplaced letters
-            for (let k = 0; k < guesses.length; k = k + 1) {
-              const guess = guesses[k];
-              if (guess.letter === key && guess.isInAnswer) {
-                guess.isInAnswer = false;
-              }
-            }
-          } else {
-            // more than one of the same letter in puzzle
-            console.log(
-              `There is more than one  of the letter ${key} in the solution`
-            );
-          }
-        }
-
-        currentChoice.isNextTurn = false;
-
-        this._tileSet.add(
-          `${currentChoice.letter}:` +
-            `${currentChoice.isCorrectlyPlaced ? 1 : 0}:` +
-            `${currentChoice.isInAnswer ? 1 : 0}`
-        );
-
-        const nextGuess = guesses[nextGuessIndex + 1];
-        if (nextGuess) {
-          nextGuess.isNextTurn = true;
-        }
-      }
+      });
     }
   }
 
-  newGame(): void {
-    this.gameOver = false;
-    this.gameWon = false;
-    this.playedTiles = [];
-    this._tileSet.clear();
-
-    // fetch a word and create the model
-    this._api.getPuzzle().subscribe((word: any) => {
-      this._solution = word;
-      this._letters = [...word];
-      this._lettersCopy = [...this._solution];
-
-      console.log(this._solution);
-
-      const solutionLen = this._letters.length;
-      const rounds = [];
-
-      for (let i = 0; i < this._numRounds; i = i + 1) {
-        const guesses = [];
-        for (let j = 0; j < solutionLen; j = j + 1) {
-          guesses.push({
-            letter: null,
-            isCorrectlyPlaced: false,
-            isInAnswer: false,
-            isNextTurn: j === 0 && i === 0 ? true : false,
-          });
-        }
-        rounds.push({
-          guesses,
-          hasRoundStarted: false,
-          isRoundComplete: false,
-          isPuzzleIncomplete: false,
-          isPuzzleSolved: false,
-          isWordInvalid: false,
-        });
-      }
-
-      this.game = rounds;
-      this._currentRoundIndex = 0;
-      this._currentRound = this.game[this._currentRoundIndex];
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(): void {
+    this._analyticsSvc.gaCaptureAnalyticsEvent({
+      eventName: 'num_session_plays',
+      eventValue: this._numPlayedSession,
     });
   }
 
-  private _roundOver(): void {
-    this._currentRound.isRoundComplete = true;
+  handleKeyPress(key: string): void {
+    if (this.isBoardLocked) {
+      return;
+    }
 
-    const incorrectChoice = this._currentRound.guesses.findIndex(
-      (letter) => letter.isCorrectlyPlaced === false
-    );
+    const vibrationDuration = 10;
+    vibrateDevice(vibrationDuration);
 
-    this._currentRound.isPuzzleSolved = incorrectChoice === -1;
+    if (key === SpecialKeysEnum.Refresh) {
+      this._confirmNewGameRequest();
+      return;
+    }
 
-    if (this._currentRound.isPuzzleSolved) {
-      // add solved words to local storage so they aren't choosen regularly
-      const prevSolvedWords = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const activeRound = this.rounds[this._currentRoundIndex];
 
-      // this isn't their first win - good for them!
-      if (prevSolvedWords) {
-        // add new solution to previous ones
-        const updatedWords = [this._solution, ...JSON.parse(prevSolvedWords)];
-        // update local storage
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedWords));
-      } else {
-        // first win - create the storage
-        localStorage.setItem(
-          LOCAL_STORAGE_KEY,
-          JSON.stringify([this._solution])
-        );
+    if (key === SpecialKeysEnum.Backspace) {
+      undoLastGuess(activeRound);
+      return;
+    }
+
+    const letters = activeRound.letters;
+    const isUnfinished = letters.length < GameParamsEnum.NumGuesses;
+
+    const isSubmittingGuess =
+      key === SpecialKeysEnum.Submit || key == SpecialKeysEnum.Enter;
+
+    if (isSubmittingGuess && !isModalOpen()) {
+      if (isUnfinished) {
+        activeRound.isInvalidWord = true;
+
+        vibrateDevice(this._headShakeVibPattern);
+
+        this._toastr.makeToast({
+          message: ToastrMessagesEnum.TooFew,
+        });
+
+        return;
       }
 
-      // queue the fireworks
-      this.gameWon = true;
-      this.gameOver = true;
-      this.celebrate();
+      const guessedWord = letters.join('');
+      this._verifyWord(guessedWord);
+
+      return;
     }
 
-    this._currentRoundIndex += 1;
+    const isValidLetter = key.length === 1 && /[a-zA-Z]/.test(key);
+    if (isValidLetter && isUnfinished) {
+      const currentTile = activeRound.guesses[letters.length];
+      currentTile.isActive = false;
 
+      const nextTile = activeRound.guesses[letters.length + 1];
+      if (nextTile) {
+        nextTile.isActive = true;
+      }
+
+      letters.push(key);
+
+      const isFirstInteraction =
+        letters.length === 1 && this._currentRoundIndex === 0;
+
+      if (isFirstInteraction) {
+        this._gameStartTime = Date.now();
+      }
+    }
+  }
+
+  ngOnInit(): void {
+    this._numPlayedAllTime = this._storageSvc.getGamesPlayedCount();
+    this._pwa.hasUpdateFlag$;
+    this._pwa.checkForUpdateFlag();
+    this._pwa.hasUpdateFlag$.subscribe((isFlagPresent) => {
+      this.isVersionUpdated = isFlagPresent;
+    });
+    this._displayInstructions();
+  }
+
+  // new game animation event handler (on complete)
+  onBoardCleared(event: AnimationEvent): void {
+    // event.toState === true when animation completed
+    if (event.toState) {
+      this._toastr
+        .makeToast({
+          message: ToastrMessagesEnum.WellWishes,
+          options: { timeOut: 1000 },
+        })
+        .onHidden.subscribe(() => {
+          this._setCursorToFirstPos();
+          this.isBoardLocked = false;
+          this.shouldClearBoard = false;
+        });
+    }
+  }
+
+  onRoundCompleteAnim(event: AnimationEvent, numRound: number): void {
+    // puzzle was solved
+    if (event.toState === this.roundFinish.Solved) {
+      const successVibDuration = 200;
+      const successVibPause = 100;
+
+      vibrateDevice([successVibDuration, successVibPause, successVibDuration]);
+
+      this._toastr
+        .makeToast({
+          message: this._isFastestTime
+            ? 'New Fastest Win!'
+            : getSuccessMessage(numRound),
+        })
+        .onHidden.subscribe(() => {
+          this._showSummaryModal();
+        });
+
+      return;
+    }
+
+    const numFinalRound = this._numRounds - 1;
+
+    // not the final round and puzzle is unsolved
     if (
-      !this._currentRound.isPuzzleSolved &&
-      this._currentRoundIndex < this._numRounds
+      event.toState === this.roundFinish.Completed &&
+      numRound !== numFinalRound
     ) {
-      this._currentRound = this.game[this._currentRoundIndex];
-
-      this._currentRound.guesses[0].isNextTurn = true;
-      this._lettersCopy = [...this._letters];
+      this._setCursorToFirstPos();
+      this.isBoardLocked = false;
+      return;
     }
 
-    this.playedTiles = [...this._tileSet];
-    this._tileSet.clear();
-
-    if (this._currentRoundIndex === this._numRounds) {
-      this.gameOver = true;
+    // final round and the user lost
+    if (
+      event.toState === this.roundFinish.Completed &&
+      numRound === numFinalRound
+    ) {
+      this._showSummaryModal();
     }
   }
 
-  handleBackspace(): void {
-    // @ts-ignore
-    const lastAnswerIndex = this._currentRound.guesses.findLastIndex(
-      // @ts-ignore
-      (x) => x.letter !== null
-    );
-    const lastGuess = this._currentRound.guesses[lastAnswerIndex];
+  openNav(): void {
+    this.isNavOpen = true;
 
-    this._tileSet.delete(
-      `${lastGuess.letter}:` +
-        `${lastGuess.isCorrectlyPlaced ? 1 : 0}:` +
-        `${lastGuess.isInAnswer ? 1 : 0}`
-    );
-    this._currentRound.guesses[lastAnswerIndex].letter = null;
-
-    const prevGuess = this._currentRound.guesses[lastAnswerIndex];
-    const nextGuess = this._currentRound.guesses[lastAnswerIndex + 1];
-
-    if (nextGuess) {
-      nextGuess.isNextTurn = false;
-    }
-
-    if (prevGuess) {
-      prevGuess.isNextTurn = true;
-    }
-
-    // return spent letter to the available pool
-    this._lettersCopy[lastAnswerIndex] = this._solution[lastAnswerIndex];
+    this._analyticsSvc.gaCaptureAnalyticsEvent({
+      eventAction: 'nav open',
+      eventName: 'navigation',
+      eventCategory: 'side-nav',
+    });
   }
 
-  private celebrate() {
+  roundTrackBy = (index: number): number => index;
+  tileTrackBy = (index: number): number => index;
+
+  private _confirmNewGameRequest(): void {
+    const gaEventConfig = {
+      eventName: 'new_game_request',
+      eventCategory: 'user-request',
+      eventLabel: 'new-game',
+    };
+
+    this._analyticsSvc.gaCaptureAnalyticsEvent({
+      ...gaEventConfig,
+      eventLabel: 'open-dialgue',
+    });
+
+    this._modalSvc
+      .openModal(ModalNameEnum.Confirm, {
+        title: NewGamePromptEnum.Title,
+        message: NewGamePromptEnum.Message,
+      })
+      .subscribe((wantsNewGame: boolean | undefined) => {
+        if (wantsNewGame) {
+          this._analyticsSvc.gaCaptureAnalyticsEvent({
+            ...gaEventConfig,
+            eventLabel: 'confirmed',
+          });
+
+          this._newGame();
+        } else {
+          this._analyticsSvc.gaCaptureAnalyticsEvent({
+            ...gaEventConfig,
+            eventLabel: 'dismissed',
+          });
+        }
+      });
+  }
+
+  private _displayInstructions(): void {
+    if (this._storageSvc.hasSeenInstructions()) {
+      this._newGame();
+    } else {
+      this._modalSvc.openModal(ModalNameEnum.Instructions).subscribe(() => {
+        this._newGame();
+        this._storageSvc.saveInstructionViewState();
+      });
+    }
+  }
+
+  private _incrementGameCount(): void {
+    this._numPlayedSession += 1;
+    this._numPlayedAllTime += 1;
+    this._storageSvc.saveNumGames(this._numPlayedAllTime);
+  }
+
+  private _newGame(): void {
+    this._resetGameBoard();
+
+    this._promptForDonation().subscribe(() => {
+      this._toastr
+        .makeToast({
+          message: ToastrMessagesEnum.NewGame,
+          options: { timeOut: 1000 },
+        })
+        .onHidden.subscribe(() => {
+          this.shouldClearBoard = true;
+
+          this._puzzleSvc.getPuzzle().subscribe((newWord: string) => {
+            this._solution = newWord;
+
+            if (!environment.production) {
+              console.log(this._solution);
+            }
+          });
+        });
+    });
+  }
+
+  private _promptForDonation(): Observable<any> {
+    const numGames = 5;
+    const isTimeForDonation =
+      this._numPlayedAllTime > 0 && this._numPlayedAllTime % numGames === 0;
+
+    if (isTimeForDonation) {
+      if (this._numLastDonationGame === this._numPlayedAllTime) {
+        return of({});
+      }
+
+      this._numLastDonationGame = this._numPlayedAllTime;
+
+      return this._modalSvc.openModal(ModalNameEnum.Donation, {
+        title: 'A Brief Interruption',
+        message: 'Your game will start momentarily.',
+      });
+    }
+
+    // fall-through observable
+    return of({});
+  }
+
+  private _resetGameBoard(): void {
+    this._currentRoundIndex = 0;
+    this._guessSvc.reset();
+    this.gameTime = 60;
+    this.hasWonGame = false;
+    this.haveTilesBounced = false;
+    this.isBoardLocked = true;
+    this.rounds = getPristineGameModel();
+  }
+
+  private _saveGameTime(): void {
+    const gameTime = calcElapsedTime(this._gameStartTime, Date.now());
+    this._gameDuration = gameTime.readableTime;
+    this._isFastestTime = this._storageSvc.saveGameTime(gameTime);
+  }
+
+  private _setCursorToFirstPos(): void {
+    this.rounds[this._currentRoundIndex].guesses[0].isActive = true;
+  }
+
+  private _showSummaryModal(): void {
+    this._modalSvc
+      .openModal(ModalNameEnum.Summary, {
+        fastestWinTime:
+          this._storageSvc.getFastestWinTime() || this._gameDuration,
+        gameTime: this._gameDuration,
+        solution: this._solution,
+        wasGameWon: this.hasWonGame,
+      })
+      .subscribe(() => this._newGame());
+  }
+
+  private _submitGuess(guessedWord: string): void {
+    const activeRound = this.rounds[this._currentRoundIndex];
+    // updates tiles
+    activeRound.guesses = getGuessState(guessedWord, this._solution);
+    // updates keyboard
+    this._guessSvc.updateGuess(activeRound.guesses);
+
+    const numNextRound = this._currentRoundIndex + 1;
+
+    this._currentRoundIndex = numNextRound;
+
+    activeRound.isRoundComplete = true;
+    this.hasWonGame = guessedWord === this._solution;
+    activeRound.isWinningRound = this.hasWonGame;
+
+    const isGameOver = numNextRound === this._numRounds || this.hasWonGame;
+
+    if (isGameOver) {
+      this._saveGameTime();
+      this._incrementGameCount();
+    }
+
+    if (this.hasWonGame) {
+      this._storageSvc.saveWinData(this._currentRoundIndex, this._solution);
+    }
+  }
+
+  private _verifyWord(guessedWord: string) {
+    // check for slow response from API provider
+    let didApiRespond = false;
+
+    const verifyWord$ = this._verifyWordSvc.verifyWord(guessedWord).subscribe({
+      next: () => {
+        didApiRespond = true;
+        this._submitGuess(guessedWord);
+      },
+      error: (err: HttpErrorResponse) => {
+        didApiRespond = true;
+
+        // we are offline and the word is not in the service worker cache
+        if (!window.navigator.onLine) {
+          // disable verification until we're online again
+          this._submitGuess(guessedWord);
+        }
+
+        // word not found in dictionary
+        if (err.status === 404) {
+          // trigger head shake animation
+          this.rounds[this._currentRoundIndex].isInvalidWord = true;
+          vibrateDevice(this._headShakeVibPattern);
+
+          this._toastr.makeToast({
+            message: ToastrMessagesEnum.Invalid,
+          });
+        }
+      },
+    });
+
     setTimeout(() => {
-      this._confettiService.cannon();
-    }, 750);
+      if (!didApiRespond) {
+        // cancel http request
+        verifyWord$.unsubscribe();
+        // bypass word verification in favor of user's experience
+        this._submitGuess(guessedWord);
+      }
+    }, API_TIMEOUT_DURATION);
   }
 }

@@ -1,0 +1,26 @@
+<app-modal
+  label="Consider Donating Modal"
+  [modalTitle]="title"
+  [tagline]="message"
+  (close)="exit('close-icon')"
+>
+  <div class="donation-container">
+    <p>
+      If you'd like to support this game, please consider buying me a cup of
+      coffee.
+      <a
+        class="donation-link"
+        target="_blank"
+        rel="noopener, noreferrer"
+        [attr.href]="donationUrl"
+        (click)="exit('donation-link')"
+      >
+        <span class="label">Buy Me a Coffee</span>
+        <span class="material-symbols-outlined coffee-icon">coffee</span></a
+      >
+    </p>
+    <button type="button" class="btn-no-thanks" (click)="exit('no-thanks')">
+      No thanks.
+    </button>
+  </div>
+</app-modal>

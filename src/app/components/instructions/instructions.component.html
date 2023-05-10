@@ -1,0 +1,127 @@
+<app-modal
+  label="How To Play Modal"
+  modalTitle="How To Play"
+  tagline="Guess the word in 6 tries."
+  [class.should-flip-tiles]="shouldFlipTiles"
+  (close)="close()"
+>
+  <div class="examples-container">
+    <ul class="rules-list">
+      <li class="rules-list-item">Each guess must be a valid 5-letter word.</li>
+      <li class="rules-list-item">
+        <span
+          >The color of the tiles will change to show how close your guess was
+          to the word.</span
+        >
+      </li>
+    </ul>
+
+    <h2 class="examples-title">Examples</h2>
+
+    <div class="row" aria-label="lunar">
+      <div class="tiles">
+        <div class="flip-tile">
+          <div class="flip-tile-inner example-correct">
+            <div class="flip-tile-front">
+              <div class="tile" aria-hidden="true">l</div>
+            </div>
+            <div class="flip-tile-back correct">
+              <div
+                aria-label="l correct"
+                aria-live="polite"
+                class="tile correct"
+                role="img"
+              >
+                l
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-label="u"
+          aria-live="polite"
+          class="tile flip-tile-adjacent"
+          role="img"
+        >
+          u
+        </div>
+        <div class="tile" role="img" aria-label="n" aria-live="polite">n</div>
+        <div class="tile" role="img" aria-label="a" aria-live="polite">a</div>
+        <div class="tile" role="img" aria-label="r" aria-live="polite">r</div>
+      </div>
+      <p class="feedback-explanation">
+        <strong>L</strong> is in the word and in the correct spot.
+      </p>
+    </div>
+    <div class="row" aria-label="moist">
+      <div class="tiles">
+        <div class="tile" role="img" aria-label="m" aria-live="polite">m</div>
+        <div class="flip-tile">
+          <div class="flip-tile-inner example-present">
+            <div class="flip-tile-front">
+              <div class="tile" aria-hidden="true">O</div>
+            </div>
+            <div class="flip-tile-back present">
+              <div
+                aria-label="o present"
+                aria-live="polite"
+                class="tile present"
+                role="img"
+              >
+                o
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-label="i"
+          aria-live="polite"
+          class="tile flip-tile-adjacent"
+          role="img"
+        >
+          i
+        </div>
+        <div class="tile" role="img" aria-label="s" aria-live="polite">s</div>
+        <div class="tile" role="img" aria-label="t" aria-live="polite">t</div>
+      </div>
+      <p class="feedback-explanation">
+        <strong>O</strong> is in the word but in the wrong spot.
+      </p>
+    </div>
+    <div class="row last-row" aria-label="clerk">
+      <div class="tiles">
+        <div class="tile" role="img" aria-label="c" aria-live="polite">c</div>
+        <div class="tile" role="img" aria-label="l" aria-live="polite">l</div>
+        <div class="tile" role="img" aria-label="e" aria-live="polite">e</div>
+        <div class="flip-tile">
+          <div class="flip-tile-inner example-absent">
+            <div class="flip-tile-front">
+              <div class="tile" role="img" aria-hidden="true">r</div>
+            </div>
+            <div class="flip-tile-back">
+              <div
+                aria-label="r absent"
+                aria-live="polite"
+                class="tile absent"
+                role="img"
+              >
+                r
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          aria-label="k"
+          aria-live="polite"
+          class="tile flip-tile-adjacent"
+          role="img"
+        >
+          k
+        </div>
+      </div>
+      <p class="feedback-explanation">
+        <strong>R</strong> is not in the word in any spot.
+      </p>
+    </div>
+  </div>
+</app-modal>

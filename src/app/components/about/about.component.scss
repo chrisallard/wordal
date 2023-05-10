@@ -1,0 +1,36 @@
+@import "vars";
+@import "mixins";
+
+.about-container {
+  padding: 20px 40px;
+}
+
+.bio-link {
+  color: $color-light-blue;
+
+  &:hover {
+    color: darken($color-light-blue, 10%);
+  }
+}
+
+.about-item {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.about-label {
+  flex: 1;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.about-desc {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.heart-icon {
+  color: $color-red;
+  font-size: 16px;
+  margin-left: -5px;
+}

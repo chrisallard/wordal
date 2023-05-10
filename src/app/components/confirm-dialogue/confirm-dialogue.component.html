@@ -1,0 +1,26 @@
+<app-modal
+  label="New Game Confirmation Modal"
+  [modalTitle]="title"
+  [tagline]="message"
+  (close)="confirm(false)"
+>
+  <div class="btn-container">
+    <button
+      type="button"
+      class="btn-cancel"
+      aria-label="Cancel"
+      (click)="confirm(false)"
+    >
+      <span class="material-symbols-outlined" aria-hidden="true"> close </span>
+    </button>
+
+    <button
+      type="button"
+      class="btn-confirm"
+      aria-label="Ok"
+      (click)="confirm(true)"
+    >
+      <span class="material-symbols-outlined" aria-hidden="true"> check </span>
+    </button>
+  </div>
+</app-modal>

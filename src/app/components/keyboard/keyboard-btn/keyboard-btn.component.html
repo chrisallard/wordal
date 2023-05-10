@@ -1,0 +1,17 @@
+<button
+  class="key"
+  tabindex="0"
+  type="button"
+  [attr.aria-label]="getAriaLabel()"
+  [class]="{
+    active: isActive && !isEnterKey,
+    'special-btn': isIconKey,
+    'submit-btn': isEnterKey
+  }"
+  [@keyColor]="isIconKey || isEnterKey ? '' : key.state"
+  (click)="keyPress()"
+>
+  <span [class.material-symbols-outlined]="isIconKey">
+    {{ key.alias ? key.alias : key.value }}</span
+  >
+</button>

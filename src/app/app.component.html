@@ -15,98 +15,97 @@
   </svg>
   <p>Please rotate your device to play.</p>
 </div>
-<div id="container">
-  <h1>
-    <span class="w">W</span>
-    <span class="o">O</span>
-    <span class="r">R</span>
-    <span class="d">D</span>
-    <!-- <img
-    src="/assets/angular.png"
-    width="40px"
-    alt="Angular Icon"
-    aria-hidden="true"
-  /> -->
-    <span class="a">A</span>
-    <span class="l">L</span>
-  </h1>
 
-  <div class="board">
-    <ng-container *ngFor="let round of game; let i = index">
-      <div
-        class="row"
-        role="group"
-        [@roundComplete]="
-          round.isRoundComplete
-            ? round.isRoundComplete && round.isPuzzleSolved
-              ? 'solved'
-              : 'completed'
-            : ''
-        "
-        [attr.arial-label]="'Row ' + (i + 1)"
-        [class]="{
-          'word-invalid': round.isWordInvalid,
-          'round-over': round.isRoundComplete
-        }"
-      >
-        <ng-container *ngFor="let guess of round.guesses; let j = index">
-          <ng-template #letter>
-            <div
-              class="letter"
-              aria-live="polite"
-              aria-roledescription="tile"
-              [attr.aria-label]="guess.letter || 'empty'"
-              [class]="{
-                guessed: guess.letter,
-                almost: guess.isInAnswer && !guess.isCorrectlyPlaced,
-                correct: guess.isCorrectlyPlaced,
-                incorrect:
-                  guess.letter && !guess.isCorrectlyPlaced && !guess.isInAnswer
-              }"
-            >
-              <span class="users-guess">{{ guess.letter }}</span>
-            </div>
-          </ng-template>
+<app-side-nav [isOpen]="isNavOpen" (closed)="isNavOpen = false"></app-side-nav>
 
-          <div
-            class="flip-tile"
-            [class]="{
-              active: guess.isNextTurn,
-              'delay-trans': j == 0 && !round.hasRoundStarted
-            }"
-          >
-            <div
-              class="flip-tile-inner"
-              [@flipTile]="round.isRoundComplete ? 'flipped' : ''"
-            >
-              <div class="flip-tile-front">
-                <ng-container *ngTemplateOutlet="letter"></ng-container>
-              </div>
-              <div class="flip-tile-back">
-                <ng-container *ngTemplateOutlet="letter"></ng-container>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-      </div>
-    </ng-container>
-    <div *ngIf="gameOver" [@newGame]="gameWon" class="controls">
-      <button
-        @newGameBtn
-        autoFocus
-        type="button"
-        (click)="newGame()"
-        class="btn-new-game"
-        tabindex="0"
-      >
-        New Game
+<div id="container" [confettiCannon]="hasWonGame && haveTilesBounced">
+  <div
+    class="new-version-wrapper"
+    aria-live="assertive"
+    [class]="{
+      reveal: isNewVersionAvailable,
+      retract: isVersionUpdated
+    }"
+    *ngIf="isNewVersionAvailable || isVersionUpdated"
+  >
+    <div class="new-version-snack" *ngIf="isNewVersionAvailable">
+      <span>New Version Available</span>
+      <button class="btn-update" type="button" (click)="reload()">
+        Update Now
       </button>
+    </div>
+
+    <div class="new-version-snack" *ngIf="isVersionUpdated">
+      New Version Installed
+      <span class="material-symbols-outlined celebrate-icon">celebration</span>
     </div>
   </div>
 
-  <app-keyboard
-    class="keyboard"
-    (keyPress)="updateGuess($event)"
-    [usedKeys]="playedTiles"
-  ></app-keyboard>
+  <div class="header">
+    <div class="nav">
+      <button
+        aria-label="Navigation menu."
+        class="btn-nav-open"
+        type="button"
+        (click)="openNav()"
+      >
+        <span class="material-symbols-outlined menu-icon">menu</span>
+      </button>
+    </div>
+
+    <h1 class="title">
+      <span class="glow">Wordal</span>
+    </h1>
+  </div>
+
+  <div class="inner-container">
+    <div
+      class="board"
+      [@boardClear]="shouldClearBoard"
+      (@boardClear.done)="onBoardCleared($event)"
+    >
+      <ng-container
+        *ngFor="let round of rounds; trackBy: roundTrackBy; let i = index"
+      >
+        <div
+          class="row"
+          role="group"
+          [attr.aria-label]="'Row ' + (i + 1)"
+          [@headShake]="round.isInvalidWord"
+          (@headShake.done)="round.isInvalidWord = false"
+          (@roundComplete.start)="isBoardLocked = true"
+          (@roundComplete.done)="onRoundCompleteAnim($event, i)"
+          [@roundComplete]="
+            round.isRoundComplete
+              ? round.isWinningRound
+                ? roundFinish.Solved
+                : roundFinish.Completed
+              : ''
+          "
+        >
+          <ng-container
+            *ngFor="
+              let guess of round.guesses;
+              trackBy: tileTrackBy;
+              let j = index
+            "
+          >
+            <app-tile
+              (bounced)="haveTilesBounced = true"
+              [guess]="guess"
+              [letter]="round.letters[j]"
+              [shouldBounce]="round.isWinningRound"
+              [shouldFlip]="round.isRoundComplete"
+            ></app-tile>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+    <app-keyboard
+      (keyPress)="handleKeyPress($event)"
+      [isBoardLocked]="isBoardLocked"
+    ></app-keyboard>
+  </div>
+
+  <div id="modal-container"></div>
 </div>

@@ -1,0 +1,70 @@
+@import "vars";
+
+.stats {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 20px;
+}
+
+.stat-container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-val {
+  font-size: 28px;
+}
+
+.stat-label {
+  color: $color-light-blue;
+  font-size: 14px;
+}
+
+.chart {
+  padding: 0 20px 20px;
+}
+
+.chart-row {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.chart-bar-container {
+  flex: 1;
+}
+
+.chart-label {
+  font-weight: bold;
+  margin-right: 5px;
+  width: 40px;
+}
+
+.chart-value {
+  background: $color-absent;
+  color: $color-white;
+  min-width: 30px;
+  text-align: right;
+}
+
+.num-wins {
+  padding: 0 10px 0 0;
+}
+
+.winner {
+  background: $color-correct;
+}
+
+.no-data {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.no-data-title {
+  font-size: 18px;
+  font-weight: bold;
+}

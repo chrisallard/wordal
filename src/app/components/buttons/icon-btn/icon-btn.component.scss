@@ -1,0 +1,30 @@
+@import "vars";
+@import "mixins";
+
+.icon-btn {
+  margin: 0 auto;
+  min-width: 150px;
+  width: 50%;
+  @include btn;
+  @include btn-action;
+  font-size: inherit;
+  font-weight: normal;
+  height: $btn-height-fluid;
+
+  &:hover,
+  &:active {
+    .icon-btn-icon {
+      border-color: $color-white;
+    }
+  }
+}
+
+.icon-btn-icon {
+  border-left: 1px solid darken($color-light-blue, 10);
+  margin: -2px 0 0 0;
+  padding: 0 10px;
+}
+
+.icon-btn-label {
+  flex: 1;
+}

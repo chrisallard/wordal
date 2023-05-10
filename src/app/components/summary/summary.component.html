@@ -1,0 +1,50 @@
+<app-modal
+  label="Summary Modal"
+  [modalTitle]="title"
+  [tagline]="message"
+  (close)="close()"
+>
+  <h2 class="modal-center-header">The Word Was</h2>
+  <div class="answer">
+    <app-icon-btn
+      aria-label="See definition"
+      iconName="saved_search"
+      [label]="solution"
+      (press)="showDef()"
+    ></app-icon-btn>
+  </div>
+
+  <h2 class="modal-center-header">Statistics</h2>
+  <div class="stats">
+    <p class="stat-line">
+      <span class="stat-value">{{
+        storedLocalData?.stats?.numAllTimeWins || 0
+      }}</span>
+      <span class="stat-label">Wins All-Time</span>
+    </p>
+    <p class="stat-line">
+      <span class="stat-value">{{
+        storedLocalData?.stats?.numGamesPlayed
+      }}</span>
+      <span class="stat-label">Games Played</span>
+    </p>
+    <p class="stat-line">
+      <span class="stat-value">{{ numSessionWins }}</span>
+      <span class="stat-label">Session Wins</span>
+    </p>
+  </div>
+
+  <div class="more-stats">
+    <button class="btn-more-stats" type="button" (click)="showStats()">
+      More Stats
+    </button>
+  </div>
+
+  <div class="new-game-container">
+    <app-icon-btn
+      label="Play Again"
+      iconName="restart_alt"
+      (press)="newGame()"
+    ></app-icon-btn>
+  </div>
+</app-modal>

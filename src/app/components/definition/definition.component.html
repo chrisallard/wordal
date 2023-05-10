@@ -1,0 +1,33 @@
+<app-modal
+  label="Definition Modal"
+  [modalTitle]="word.toUpperCase()"
+  [tagline]="phonetic"
+  (close)="close()"
+>
+  <div *ngIf="isOffline || metLatencyThreshold" class="error-offline">
+    <p>Sorry, I'm having trouble finding that definition.</p>
+    <p *ngIf="isOffline">It appears you're offline.</p>
+  </div>
+
+  <div class="definition-container">
+    <ng-container *ngIf="definitions && definitions[0]">
+      <ng-container
+        *ngFor="let meaning of definitions[0].meanings | slice : 0 : 2"
+      >
+        <div>
+          <p class="part-of-speech">{{ meaning.partOfSpeech }}.</p>
+
+          <ol class="definition-list">
+            <li
+              class="definition-list-item"
+              *ngFor="let def of meaning.definitions | slice : 0 : 1"
+            >
+              <span>{{ def.definition }}</span>
+              <span class="example">{{ def.example }}</span>
+            </li>
+          </ol>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</app-modal>

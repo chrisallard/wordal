@@ -1,9 +1,26 @@
-<ng-container *ngFor="let rows of keyboardRows; let k = index">
-  <div class="key-row">
-    <app-keyboard-btn
-      *ngFor="let key of rows"
-      (press)="keyPress.emit(key.value)"
-      [key]="key"
-    ></app-keyboard-btn>
+<div class="keyboard-container">
+  <div aria-label="keyboard" class="keyboard" role="group">
+    <ng-container
+      *ngFor="let rows of keyboard; trackBy: rowTracker; let i = index"
+    >
+      <div class="key-row">
+        <!-- creates an indent on the second keyboard row -->
+        <div class="flex-spacer" *ngIf="i === 1"></div>
+        <ng-container *ngFor="let key of rows; trackBy: keyTracker">
+          <app-keyboard-btn
+            class="btn"
+            [isActive]="key.value === activeKey"
+            [class]="{
+              'btn-submit': key.value === specialKeys.enter,
+              'btn-backspace': key.value === specialKeys.backspace
+            }"
+            [key]="key"
+            (press)="keyPress.emit(key.alias || key.value)"
+          ></app-keyboard-btn>
+        </ng-container>
+        <!-- creates an indent on the second keyboard row -->
+        <div class="flex-spacer" *ngIf="i === 1"></div>
+      </div>
+    </ng-container>
   </div>
-</ng-container>
+</div>

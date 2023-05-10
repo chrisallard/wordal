@@ -1,0 +1,94 @@
+@import "vars";
+
+.side-nav {
+  background: $color-white;
+  bottom: -2px;
+  box-shadow: 2px 0 5px 0 rgba($color-black, 44%);
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: -2px;
+  width: var(--navWidth);
+  z-index: $side-nav-z-index;
+}
+
+.nav-header {
+  padding-bottom: 12px;
+}
+
+.overlay {
+  background: rgba($color-black, 0.5);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: $side-nav-overlay-z-index;
+}
+
+.btn-close-nav {
+  background: none;
+  border-radius: $btn-close-border-radius;
+  border: none;
+  height: 24px;
+}
+
+.nav-list {
+  flex: 1;
+}
+
+.nav-item {
+  border-bottom: 1px dotted $color-grey-200;
+}
+
+.nav-btn {
+  align-items: center;
+  background: none;
+  border: none;
+  color: $color-black;
+  display: flex;
+  padding: 20px;
+  transition: color 0.25s;
+  width: 100%;
+
+  &:active,
+  &:hover {
+    color: $color-light-blue;
+  }
+}
+
+.nav-icon {
+  margin-right: 20px;
+}
+
+.nav-item-title {
+  font-size: 18px;
+}
+
+.nav-icon,
+.nav-item-title {
+  line-height: 2; // fixes a centering alignment issue
+}
+
+.github-link {
+  align-items: center;
+  background: $color-github;
+  color: $color-white;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  text-decoration: none;
+
+  &:active,
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &-logo {
+    fill: currentColor;
+  }
+
+  &-text {
+    margin-right: 10px;
+  }
+}

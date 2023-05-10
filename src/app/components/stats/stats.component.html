@@ -1,0 +1,58 @@
+<app-modal
+  label="Extended Statistics Modal"
+  modalTitle="Statistics"
+  tagline=""
+  (close)="close()"
+>
+  <div *ngIf="data && data.stats; else noStats">
+    <div class="stats">
+      <div class="stat-container">
+        <span class="stat-val">{{ data.stats.numGamesPlayed }}</span
+        ><span class="stat-label">Played</span>
+      </div>
+      <div class="stat-container">
+        <span class="stat-val">{{ data.stats.numAllTimeWins }}</span
+        ><span class="stat-label">Wins</span>
+      </div>
+      <div class="stat-container">
+        <span class="stat-val">{{ data.stats.winPercentage }}</span
+        ><span class="stat-label">Win %</span>
+      </div>
+      <div class="stat-container">
+        <span class="stat-val">{{ data.stats.fastestTime?.readableTime }}</span
+        ><span class="stat-label">Fastest</span>
+      </div>
+    </div>
+    <h2 class="modal-center-header">Guess Distribution</h2>
+    <div class="chart">
+      <div
+        class="chart-row"
+        *ngFor="let distribution of data.stats.guessDistribution"
+      >
+        <div class="chart-label">
+          {{ distribution.numRound + distribution.suffix }}
+        </div>
+        <div class="chart-bar-container">
+          <div
+            class="chart-value"
+            [class.winner]="shouldIndicateWinningRound && distribution.isWinner"
+            [style]="{
+              width:
+                (distribution.numWins / (data.stats.numAllTimeWins || 0)) *
+                  100 +
+                '%'
+            }"
+          >
+            <span class="num-wins">{{ distribution.numWins }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #noStats>
+    <div class="no-data">
+      <span class="no-data-title">Nothing to display.</span>
+      <span>Play Wordal to generate usage statistics.</span>
+    </div></ng-template
+  >
+</app-modal>

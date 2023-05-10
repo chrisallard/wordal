@@ -1,0 +1,31 @@
+<ng-template #tile>
+  <div
+    aria-live="polite"
+    aria-roledescription="tile"
+    class="tile"
+    role="img"
+    [attr.aria-label]="guessFeedback ? letter + ' ' + guessFeedback : letter"
+    [class]="guessFeedback"
+  >
+    <span class="cursor" *ngIf="guess.isActive"></span>
+    <span class="letter">{{ letter }}</span>
+  </div>
+</ng-template>
+<div
+  class="flip-tile"
+  [@flipTile]="shouldBounce ? 'bounce' : ''"
+  (@flipTile.done)="tileBounced($event)"
+>
+  <div class="flip-tile-inner" [@flipTileInner]="shouldFlip ? 'flip' : ''">
+    <div
+      class="flip-tile-front"
+      [attr.aria-hidden]="shouldFlip"
+      [class.tile-filled]="letter"
+    >
+      <ng-container *ngTemplateOutlet="tile"></ng-container>
+    </div>
+    <div class="flip-tile-back" [attr.aria-hidden]="!shouldFlip">
+      <ng-container *ngTemplateOutlet="tile"></ng-container>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<app-modal
+  modalTitle="About Wordal"
+  tagline="The who, the what, and the why."
+  label="About Wordal Confirmation Modal"
+  (close)="close()"
+>
+  <div class="about-container">
+    <ul>
+      <li class="about-item">
+        <span class="about-label">Developer:</span>
+        <span class="about-desc">
+          <a
+            class="bio-link"
+            href="https://linkedin.com/in/chris-allard"
+            rel="noopener, noreferrer"
+            target="_blank"
+            title="View my LinkedIn profile."
+            >Chris Allard
+          </a>
+        </span>
+      </li>
+      <li class="about-item">
+        <span class="about-label">Technology:</span>
+        <span class="about-desc">
+          Angular, SCSS, AWS (S3, Cloudfront), Local Storage, Google (Fonts,
+          Icons, Analytics)
+        </span>
+      </li>
+      <li class="about-item">
+        <span class="about-label">Purpose:</span>
+        <span class="about-desc"> Coding Challenge, Portfolio Piece </span>
+      </li>
+      <li class="about-item">
+        <span class="about-label">Thanks To:</span>
+        <span class="about-desc about-thanks-desc">
+          My Beautiful Wife
+          <span class="material-symbols-outlined heart-icon">
+            favorite
+          </span></span
+        >
+      </li>
+    </ul>
+  </div>
+</app-modal>

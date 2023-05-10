@@ -1,0 +1,24 @@
+@import "vars";
+
+@mixin btn {
+  align-items: center;
+  border-color: transparent;
+  border-radius: $border-radius;
+  box-shadow: $box-shadow;
+  display: flex;
+  font-weight: bold;
+  justify-content: center;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+@mixin btn-action {
+  color: $color-white;
+  background: $color-light-blue;
+  transition: background 0.25s;
+
+  &:active,
+  &:hover {
+    background: darken($color-light-blue, 10%);
+  }
+}

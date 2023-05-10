@@ -1,0 +1,43 @@
+@import "vars";
+@import "mixins";
+
+.btn-container {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: 40px;
+
+  @media screen and (max-width: $xs-screen-width) {
+    margin: 40px 20px;
+  }
+}
+
+.btn-cancel,
+.btn-confirm {
+  @include btn;
+  color: $color-white;
+  height: $btn-height-fixed;
+  transition: background 0.25s;
+  width: 100%;
+}
+
+.btn-cancel {
+  background: $color-red;
+  margin-right: 40px;
+
+  @media screen and (max-width: $xs-screen-width) {
+    margin-right: 20px;
+  }
+
+  &:hover {
+    background: darken($color-red, 10%);
+  }
+}
+
+.btn-confirm {
+  background: $color-green;
+
+  &:hover {
+    background: darken($color-green, 10%);
+  }
+}

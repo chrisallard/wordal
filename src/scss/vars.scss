@@ -1,29 +1,45 @@
-$screen-max-width: 600px;
-$xs-screen-width: 300px;
+// colors
+$color-black: #000;
+$color-github: #24292f;
+$color-green: #66bb6a;
+$color-grey-100: #c4c4c43b;
+$color-grey-200: #ced1d4;
+$color-grey-300: #c4c4c4;
+$color-grey-400: #babfc0;
+$color-grey-500: #959595;
+$color-grey-600: #7c7c7c;
+$color-grey-900: #242424;
+$color-light-blue: #2f96b4;
+$color-purple: #6864aa;
+$color-red: #c3423f;
+$color-tap: fade-out($color-black, 0.7);
+$color-white: #fff;
+$color-orange: #ff9800;
 
-$tile-height: 75px;
-$tile-width: 75px;
+$color-absent: $color-grey-500;
+$color-correct: $color-green;
+$color-present: $color-orange;
 
-$sm-tile-height: 50px;
-$sm-tile-width: 50px;
+$color-rotation-lock: $color-grey-500;
 
-$xs-tile-height: 40px;
-$xs-tile-width: 40px;
+// fonts
+$base-font-size: 16px;
+$brand-font-family: "Yellowtail", cursive;
 
-$main-bg: #143642;
+// breakppints/widths
+$container-max-width: 436px;
+$rotation-lock-width: 1000px;
+$xs-screen-width: 425px;
 
-$color-font-base: #000;
-$tile-bkg: #fff;
-$tile-incorrect: #b1b3b1;
-$tile-correct: #6aaa64;
-$tile-border: $tile-correct;
-$tile-partially-correct: #ec9a29;
+// z-index
+$modal-z-index: 120;
+$rotation-lock-z-index: 1000;
+$side-nav-overlay-z-index: 105;
+$side-nav-z-index: 110;
+$toastr-z-index: 100;
 
-$letter-full-unchecked: #333;
-$letter-full-checked: $tile-bkg;
-$letter-empty-unchecked: #ccc;
-
-$outline-focus: $tile-partially-correct;
-$tap-outline: rgba(0, 0, 0, 0.3);
-
-$btn-bg: #6864aa;
+$border-radius: 6px;
+$box-shadow: 0 3px 3px -3px fade-out($color-black, 0.25);
+$btn-close-border-radius: 14px;
+$btn-height-fixed: 50px;
+$btn-height-fluid: 6vh;

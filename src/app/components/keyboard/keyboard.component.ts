@@ -3,110 +3,74 @@ import {
   EventEmitter,
   HostListener,
   Input,
-  OnChanges,
+  OnInit,
   Output,
-  SimpleChanges,
 } from '@angular/core';
+import { GuessService } from '@app/services/guess/guess.service';
+import { SpecialKeysEnum } from '@app/ts/enums';
+import { IGuess, IKeyBoard } from '@app/ts/interfaces';
+import { isModalOpen } from '@app/utils/is-modal-open.utils';
 
 @Component({
   selector: 'app-keyboard',
   templateUrl: './keyboard.component.html',
   styleUrls: ['./keyboard.component.scss'],
 })
-export class KeyboardComponent implements OnChanges {
-  @Input() usedKeys: any;
+export class KeyboardComponent implements OnInit {
+  @Input() isBoardLocked: boolean = false;
   @Output() keyPress = new EventEmitter();
 
-  @HostListener('document:keydown', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    const key = event.key.toUpperCase();
-    const isTabKey = key === 'TAB';
+  activeKey: string = '';
+  keyboard = [];
+  specialKeys = {
+    enter: SpecialKeysEnum.Enter,
+    backspace: SpecialKeysEnum.Backspace,
+  };
 
-    // don't interfere with keyboard navigation
-    if (isTabKey || (isTabKey && event.shiftKey)) {
+  constructor(private _guessSvc: GuessService) {}
+
+  ngOnInit(): void {
+    this._guessSvc.guess$.subscribe((data: IKeyBoard) => {
+      // creates array of arrays based on common obj property (i.e. row number)
+      const groupedObj: any = Object.values(data).reduce(
+        (prev: any, current: any) => {
+          const prop = current['row'];
+          prev[prop] = prev[prop] ?? [];
+          prev[prop].push(current);
+          return prev;
+        },
+        []
+      );
+      // clean up empty array item(s)
+      this.keyboard = groupedObj.filter((el: any) => el != null);
+    });
+  }
+
+  // *ngFor trackBy trackers
+  keyTracker = (index: number, key: IGuess): string | number =>
+    key.value || index;
+  rowTracker = (index: number): number => index;
+
+  @HostListener('document:keyup', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (this.isBoardLocked) {
       return;
     }
 
-    this.keyPress.emit(key);
-  }
+    const isTabKey = this.activeKey === SpecialKeysEnum.Tab;
 
-  private _getModel() {
-    return [
-      [
-        { value: 'q', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'w', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'e', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'r', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 't', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'y', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'u', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'i', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'o', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'p', isCorrect: false, isInAnswer: false, wasUsed: false },
-      ],
-      [
-        { value: 'a', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 's', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'd', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'f', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'g', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'h', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'j', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'k', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'l', isCorrect: false, isInAnswer: false, wasUsed: false },
-      ],
-      [
-        { value: 'enter' },
-        { value: 'z', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'x', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'c', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'v', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'b', isCorrect: false, isInAnswer: false, wasUsed: false },
-        { value: 'n', isCorrect: false, isInAnswer: false, wasUsed: false },
-        {
-          value: 'm',
-          isCorrect: false,
-          isInAnswer: false,
-          wasUsed: false,
-        },
-        { value: 'backspace' },
-      ],
-    ];
-  }
-
-  keyboardRows = this._getModel();
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const usedLetters = changes['usedKeys'];
-    if (usedLetters && usedLetters.currentValue) {
-      if (usedLetters.currentValue.length) {
-        usedLetters.currentValue.forEach((letter: string) => {
-          // format is: character : is correct (as 1 or 0) : is in answer (as 1 or 0) (e.g. 'P:1:0')
-          const a = letter.split(':');
-
-          const character = a[0].toLowerCase();
-          const isCorrect = parseInt(a[1]);
-          const isInAnswer = parseInt(a[2]);
-
-          // run through the keyboard's rows
-          for (let i = 0; i < this.keyboardRows.length; i = i + 1) {
-            // run through the keyboard's row's keys
-            for (let j = 0; j < this.keyboardRows[i].length; j = j + 1) {
-              if (this.keyboardRows[i][j].value === character) {
-                this.keyboardRows[i][j].wasUsed = true;
-                this.keyboardRows[i][j].isCorrect =
-                  isCorrect == 1 ? true : false;
-
-                this.keyboardRows[i][j].isInAnswer =
-                  isInAnswer == 1 ? true : false;
-              }
-            }
-          }
-        });
-      } else {
-        // new game - reset model
-        this.keyboardRows = this._getModel();
-      }
+    // don't interfere with keyboard navigation
+    if (isTabKey || (isTabKey && event.shiftKey) || isModalOpen()) {
+      return;
     }
+
+    this.activeKey = event.key.toLowerCase();
+    // quickly deactivate the key to create a 'ghost typing' effect in the keyboard UI
+    const timeToDeactivate = 100;
+    setTimeout(() => {
+      this.activeKey = '';
+    }, timeToDeactivate);
+
+    this.keyPress.emit(this.activeKey);
   }
 }

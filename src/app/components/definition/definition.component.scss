@@ -1,0 +1,44 @@
+@import "vars";
+
+.error-offline {
+  color: #333;
+  font-size: 18px;
+  font-size: center;
+  padding: 40px 40px 0 40px;
+  text-align: center;
+}
+
+.definition-container {
+  padding: 20px;
+}
+
+.part-of-speech {
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.definition-list {
+  margin: 0 20px 20px 40px;
+}
+
+.definition-list-item {
+  margin-bottom: 5px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.example {
+  color: $color-purple;
+  font-style: italic;
+
+  &:empty {
+    display: none;
+  }
+
+  &::before,
+  &::after {
+    content: '"';
+  }
+}
