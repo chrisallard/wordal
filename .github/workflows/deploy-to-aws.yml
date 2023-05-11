@@ -2,8 +2,6 @@ name: Deploy to AWS
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -15,9 +13,7 @@ jobs:
         uses: actions/setup-node@v2.5.2
 
       - name: Install npm
-        run: |
-          npm install
-          npm run build
+        run: npm install
 
       - name: Run Tests
         run: npm run test
