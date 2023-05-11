@@ -6,6 +6,10 @@
   @include btn;
   height: 5vh;
 
+  &.disabled {
+    cursor: default;
+  }
+
   &.active,
   &:active:not(.submit-btn) {
     // !important required to override Angular animations inline style
