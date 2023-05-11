@@ -113,26 +113,22 @@ describe('GuessService', () => {
         i = i + 1;
 
         if (i === 1) {
-          console.log({ model });
-          pristineModel = model;
+          pristineModel = { ...model };
+          service.updateGuess(mockUpdates);
         }
 
         if (i === 2) {
-          dirtyModel = model;
+          dirtyModel = { ...model };
           service.reset();
         }
 
         if (i === 3 && !isLastTime) {
-          console.log({ dirtyModel });
-          console.log({ pristineModel });
           isLastTime = true;
           expect(dirtyModel).not.toEqual(pristineModel);
           expect(model).toEqual(pristineModel);
           done();
         }
       });
-
-      service.updateGuess(mockUpdates);
     });
   });
 });
