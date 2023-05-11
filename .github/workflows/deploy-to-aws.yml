@@ -1,5 +1,5 @@
 name: Deploy to AWS
-on: 
+on:
   push:
     branches: [main]
   pull_request:
@@ -13,12 +13,18 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup node.js environment
         uses: actions/setup-node@v2.5.2
-        
-      - name: npm install and npm build
+
+      - name: Install npm
         run: |
           npm install
           npm run build
-          
+
+      - name: Run Tests
+        run: npm run test
+
+      - name: Build Project
+        run: npm run build
+
       - name: S3 Sync
         uses: jakejarvis/s3-sync-action@v0.5.1
         with:
@@ -27,15 +33,14 @@ jobs:
           AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: 'us-east-2'
-          SOURCE_DIR: 'dist/wordal'
-      
+          AWS_REGION: "us-east-2"
+          SOURCE_DIR: "dist/wordal"
+
       - name: Inavlidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
         env:
           DISTRIBUTION: ${{ secrets.DISTRIBUTION }}
-          PATHS: '/*'
+          PATHS: "/*"
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          AWS_REGION: 'us-east-2'
-      
+          AWS_REGION: "us-east-2"
