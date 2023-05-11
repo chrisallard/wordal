@@ -11,6 +11,7 @@ import { GuessFeedbackEnum, SpecialKeysEnum } from '@app/ts/enums';
 })
 export class KeyboardBtnComponent implements OnInit {
   @Input() isActive: boolean = false;
+  @Input() isDisabled: boolean = false;
   @Input() key: any;
   @Input() shouldFocus: boolean = false;
   @Output() press = new EventEmitter();

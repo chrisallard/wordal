@@ -5,6 +5,7 @@
   [attr.aria-label]="getAriaLabel()"
   [class]="{
     active: isActive && !isEnterKey,
+    disabled: isDisabled,
     'special-btn': isIconKey,
     'submit-btn': isEnterKey
   }"
