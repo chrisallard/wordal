@@ -58,6 +58,7 @@ button {
 .side-nav-open {
   .flip-tile {
     .cursor {
+      // turn off blinking cursor when modals are open
       animation: none;
     }
   }

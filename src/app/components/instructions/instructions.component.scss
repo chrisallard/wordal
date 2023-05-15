@@ -1,11 +1,7 @@
 @import "vars";
 
 .examples-container {
-  padding: 20px 20px 40px;
-
-  @media (max-width: $xs-screen-width) {
-    padding-bottom: 20px;
-  }
+  padding: 20px;
 }
 
 .examples-title {
@@ -14,11 +10,10 @@
 }
 
 .rules-list {
-  margin: 0 20px 20px;
   list-style: none;
+  margin: 0 20px 20px;
 
   .rules-list-item {
-    line-height: 20px;
     margin-bottom: 10px;
 
     // custom colored list item bullets
@@ -35,6 +30,14 @@
   :last-child {
     margin-bottom: 0;
   }
+
+  @media screen and (max-width: $xs-screen-width) {
+    margin-bottom: 10px;
+  }
+}
+
+.examples {
+  margin-left: 5px;
 }
 
 .tile {
@@ -59,19 +62,19 @@
 
 .should-flip-tiles {
   .flip-tile-inner {
+    &.example-absent,
     &.example-correct,
-    &.example-present,
-    &.example-absent {
+    &.example-present {
       transform: rotateX(-180deg);
       transition-duration: 750ms;
     }
 
-    &.example-present {
-      transition-delay: 0.5s;
-    }
-
     &.example-absent {
       transition-delay: 1s;
+    }
+
+    &.example-present {
+      transition-delay: 0.5s;
     }
   }
 }
@@ -84,8 +87,8 @@
   }
 }
 
-.correct,
 .absent,
+.correct,
 .present {
   color: $color-white;
 }
