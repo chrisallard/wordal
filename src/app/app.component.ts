@@ -258,22 +258,15 @@ export class AppComponent implements OnInit {
 
     const numFinalRound = this._numRounds - 1;
 
-    // not the final round and puzzle is unsolved
-    if (
-      event.toState === this.roundFinish.Completed &&
-      numRound !== numFinalRound
-    ) {
-      this._setCursorToFirstPos();
-      this.isBoardLocked = false;
-      return;
-    }
-
-    // final round and the user lost
-    if (
-      event.toState === this.roundFinish.Completed &&
-      numRound === numFinalRound
-    ) {
-      this._showSummaryModal();
+    if (event.toState === this.roundFinish.Completed) {
+      // not the final round and puzzle is unsolved
+      if (numRound !== numFinalRound) {
+        this._setCursorToFirstPos();
+        this.isBoardLocked = false;
+      } else {
+        // final round and the user lost
+        this._showSummaryModal();
+      }
     }
   }
 

@@ -26,6 +26,7 @@ import { ConfettiService } from '@services/confetti/confetti.service';
 import { defaultSimpleModalOptions, SimpleModalModule } from 'ngx-simple-modal';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
+import { RotationLockComponent } from './components/rotation-lock/rotation-lock.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { environment } from 'src/environments/environment';
     SummaryComponent,
     TileComponent,
     TrapFocusDirective,
+    RotationLockComponent,
   ],
   imports: [
     BrowserAnimationsModule,
