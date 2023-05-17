@@ -17,6 +17,7 @@ import { DonateComponent } from '@components/donate/donate.component';
 import { InstructionsComponent } from '@components/instructions/instructions.component';
 import { KeyboardComponent } from '@components/keyboard/keyboard.component';
 import { ModalComponent } from '@components/modal/modal.component';
+import { RotationLockComponent } from '@components/rotation-lock/rotation-lock.component';
 import { SideNavComponent } from '@components/side-nav/side-nav.component';
 import { TileComponent } from '@components/tile/tile.component';
 import { ConfettiCannonDirective } from '@directives/confetti-cannon.directive';
@@ -26,7 +27,6 @@ import { ConfettiService } from '@services/confetti/confetti.service';
 import { defaultSimpleModalOptions, SimpleModalModule } from 'ngx-simple-modal';
 import { ToastrModule } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
-import { RotationLockComponent } from './components/rotation-lock/rotation-lock.component';
 
 @NgModule({
   declarations: [
