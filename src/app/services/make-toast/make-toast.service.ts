@@ -21,15 +21,8 @@ export class MakeToast {
     message = sampleToastMsg,
     options = {},
   }): ActiveToast<any> {
-    const config = {
-      timeOut: 1500,
-      toastClass: 'toasty',
-      titleClass: 'toasty-title',
-      messageClass: 'toasty-message',
-    };
-
     return this._toastrSvc.success(header, message, {
-      ...config,
+      ...toastrConfig,
       ...options,
     });
   }
