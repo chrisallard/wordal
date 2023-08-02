@@ -209,7 +209,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this._numPlayedAllTime = this._storageSvc.getGamesPlayedCount();
-    this._pwa.hasUpdateFlag$;
+
     this._pwa.checkForUpdateFlag();
     this._pwa.hasUpdateFlag$.subscribe((isFlagPresent) => {
       this.isVersionUpdated = isFlagPresent;
