@@ -86,7 +86,6 @@ export class AppComponent implements OnInit {
   isNavOpen: boolean = false;
   isNewVersionAvailable: boolean = false;
   isVersionUpdated: boolean = false;
-  reload = this._pwa.reloadWindow;
   roundFinish = RoundFinishTypeEnum;
   rounds: IRound[] = getPristineGameModel();
   shouldClearBoard: boolean = false;
@@ -278,6 +277,10 @@ export class AppComponent implements OnInit {
       eventName: 'navigation',
       eventCategory: 'side-nav',
     });
+  }
+
+  reloadWin(): void {
+    this._pwa.reloadWindow();
   }
 
   roundTrackBy = (index: number): number => index;
