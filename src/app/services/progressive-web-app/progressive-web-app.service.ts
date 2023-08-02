@@ -1,6 +1,13 @@
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+
+export const currentPagePos: number = 0;
+export const updateFlag = {
+  label: 'updated',
+  value: true,
+};
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +17,8 @@ export class ProgressiveWebApp {
 
   constructor(
     private _activatedRoute: ActivatedRoute,
-    private _router: Router
+    private _router: Router,
+    private _location: Location
   ) {}
 
   checkForUpdateFlag(): void {
@@ -32,7 +40,7 @@ export class ProgressiveWebApp {
               // remove flag from query string to prevent the message showing again on refresh
               this._router.navigate([], {
                 queryParams: {
-                  updated: null,
+                  [updateFlag.label]: null,
                 },
                 queryParamsHandling: 'merge',
               });
@@ -49,6 +57,15 @@ export class ProgressiveWebApp {
   }
 
   reloadWindow(): void {
-    window.location.href = `${window.location.href}?updated=true`;
+    this._router
+      .navigate([], {
+        queryParams: {
+          [updateFlag.label]: updateFlag.value,
+        },
+        queryParamsHandling: 'merge',
+      })
+      .then(() => {
+        this._location.historyGo(currentPagePos);
+      });
   }
 }
