@@ -29,7 +29,7 @@ html {
 }
 
 body {
-  background: linear-gradient(to top, $color-black, $color-theme) #434343;
+  background: linear-gradient(to top, $color-black, $color-theme) $color-theme;
   font-size: $base-font-size;
   line-height: 1.5;
 }
