@@ -11,39 +11,46 @@
         ><span class="stat-label">Played</span>
       </div>
       <div class="stat-container">
-        <span class="stat-val">{{ data.stats.numAllTimeWins }}</span
+        <span class="stat-val">{{ data.stats.numAllTimeWins || 0 }}</span
         ><span class="stat-label">Wins</span>
       </div>
       <div class="stat-container">
-        <span class="stat-val">{{ data.stats.winPercentage }}</span
+        <span class="stat-val">{{ data.stats.winPercentage || 0 }}</span
         ><span class="stat-label">Win %</span>
       </div>
       <div class="stat-container">
-        <span class="stat-val">{{ data.stats.fastestTime?.readableTime }}</span
+        <span class="stat-val">{{
+          data.stats.fastestTime?.readableTime || "-- : --"
+        }}</span
         ><span class="stat-label">Fastest</span>
       </div>
     </div>
-    <h2 class="modal-center-header">Guess Distribution</h2>
-    <div class="chart">
-      <div
-        class="chart-row"
-        *ngFor="let distribution of data.stats.guessDistribution"
-      >
-        <div class="chart-label">
-          {{ distribution.numRound + distribution.suffix }}
-        </div>
-        <div class="chart-bar-container">
-          <div
-            class="chart-value"
-            [class.winner]="shouldIndicateWinningRound && distribution.isWinner"
-            [style]="{
-              width:
-                (distribution.numWins / (data.stats.numAllTimeWins || 0)) *
-                  100 +
-                '%'
-            }"
-          >
-            <span class="num-wins">{{ distribution.numWins }}</span>
+
+    <div *ngIf="data.stats.guessDistribution">
+      <h2 class="modal-center-header">Guess Distribution</h2>
+      <div class="chart">
+        <div
+          class="chart-row"
+          *ngFor="let distribution of data.stats.guessDistribution"
+        >
+          <div class="chart-label">
+            {{ distribution.numRound + distribution.suffix }}
+          </div>
+          <div class="chart-bar-container">
+            <div
+              class="chart-value"
+              [class.winner]="
+                shouldIndicateWinningRound && distribution.isWinner
+              "
+              [style]="{
+                width:
+                  (distribution.numWins / (data.stats.numAllTimeWins || 0)) *
+                    100 +
+                  '%'
+              }"
+            >
+              <span class="num-wins">{{ distribution.numWins }}</span>
+            </div>
           </div>
         </div>
       </div>

@@ -15,26 +15,11 @@ export const distributionModel = [
   providedIn: 'root',
 })
 export class StorageService {
-  getFastestWinTime(): string {
-    const storedData = this.getLocalStorageData() as IStoredData;
+  getFastestWinTime = (): string =>
+    this.getLocalStorageData()?.stats?.fastestTime?.readableTime || '';
 
-    if (storedData) {
-      return storedData?.stats?.fastestTime?.readableTime || '';
-    }
-
-    return '';
-  }
-
-  getGamesPlayedCount(): number {
-    const storedData = this.getLocalStorageData();
-    let gamesPlayed = 0;
-
-    if (storedData) {
-      gamesPlayed = storedData.stats?.numGamesPlayed || gamesPlayed;
-    }
-
-    return gamesPlayed;
-  }
+  getGamesPlayedCount = (): number =>
+    this.getLocalStorageData()?.stats?.numGamesPlayed || 0;
 
   getLocalStorageData(): IStoredData | null {
     const localStorageData = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -46,15 +31,8 @@ export class StorageService {
     return sessionData ? JSON.parse(sessionData) : null;
   }
 
-  hasSeenInstructions(): boolean {
-    const storedData = this.getLocalStorageData();
-
-    if (!storedData) {
-      return false;
-    }
-
-    return storedData?.instructions?.viewed || false;
-  }
+  hasSeenInstructions = (): boolean =>
+    this.getLocalStorageData()?.instructions?.viewed || false;
 
   saveWinData(numRound: number, solution: string): void {
     this._saveGuessDistribution(numRound);
@@ -117,23 +95,24 @@ export class StorageService {
     this.setLocalStorageData(update);
   }
 
-  saveNumGames(gameCount: number): void {
+  saveNumGames(wasGameWon: boolean): void {
     const storedData = this.getLocalStorageData();
-    let update = {
+
+    let numGamesPlayed = storedData?.stats?.numGamesPlayed || 0;
+    numGamesPlayed = numGamesPlayed += 1;
+
+    let numSavedWins = storedData?.stats?.numAllTimeWins || 0;
+    numSavedWins = wasGameWon ? (numSavedWins += 1) : numSavedWins;
+
+    const update = {
+      ...(storedData || {}),
       stats: {
-        numGamesPlayed: gameCount,
+        ...(storedData?.stats || {}),
+        numGamesPlayed,
+        winPercentage: Math.floor((numSavedWins / numGamesPlayed) * 100),
       },
     };
 
-    if (storedData) {
-      update = {
-        ...storedData,
-        stats: {
-          ...(storedData?.stats || {}),
-          numGamesPlayed: gameCount,
-        },
-      };
-    }
     this.setLocalStorageData(update);
   }
 
@@ -195,9 +174,7 @@ export class StorageService {
       },
     } as IStoredData;
 
-    const numGamesPlayed = storedData?.stats?.numGamesPlayed || 1;
     let numSavedWins = storedData?.stats?.numAllTimeWins || 0;
-
     numSavedWins = numSavedWins + 1;
 
     update = {
@@ -205,7 +182,6 @@ export class StorageService {
       stats: {
         ...(storedData?.stats || {}),
         numAllTimeWins: numSavedWins,
-        winPercentage: Math.floor((numSavedWins / numGamesPlayed) * 100),
       },
     };
 

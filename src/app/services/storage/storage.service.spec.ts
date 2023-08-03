@@ -3,8 +3,8 @@ import { LOCAL_STORAGE_KEY, SESSION_STORAGE_KEY } from '@app/config/app.config';
 import { IGameDuration, IStoredData } from '@app/ts/interfaces';
 import { mockGameTime } from '@app/utils/calc-elapsed-time.spec';
 import {
-  distributionModel,
   StorageService,
+  distributionModel,
 } from '@services/storage/storage.service';
 
 describe('StorageService', () => {
@@ -31,7 +31,6 @@ describe('StorageService', () => {
 
     it('should return an empty string if no data found', () => {
       const gameTime = storageSvc.getFastestWinTime();
-
       expect(gameTime).toEqual('');
     });
   });
@@ -44,7 +43,8 @@ describe('StorageService', () => {
 
     it('should return the number of games played', () => {
       const mockNumGames = 1;
-      storageSvc.saveNumGames(mockNumGames);
+      const hasWonGame = false;
+      storageSvc.saveNumGames(hasWonGame);
 
       const numGamesPlayed = storageSvc.getGamesPlayedCount();
       expect(numGamesPlayed).toEqual(mockNumGames);
@@ -126,7 +126,6 @@ describe('StorageService', () => {
         stats: {
           guessDistribution: mockGuessDist,
           numAllTimeWins: 1,
-          winPercentage: 100,
         },
       };
 
@@ -240,71 +239,6 @@ describe('StorageService', () => {
       expect(storedLocalData).toEqual(expectedLocalData);
     });
 
-    it('should calculate and store win %', () => {
-      // pre-seed with data
-      storageSvc.setLocalStorageData({
-        stats: {
-          guessDistribution: [
-            {
-              numRound: 1,
-              numWins: 1,
-              isWinner: true,
-              suffix: 'st',
-            },
-            {
-              numRound: 2,
-              numWins: 0,
-              isWinner: false,
-              suffix: 'nd',
-            },
-            {
-              numRound: 3,
-              numWins: 0,
-              isWinner: false,
-              suffix: 'rd',
-            },
-            {
-              numRound: 4,
-              numWins: 0,
-              isWinner: false,
-              suffix: 'th',
-            },
-            {
-              numRound: 5,
-              numWins: 0,
-              isWinner: false,
-              suffix: 'th',
-            },
-            {
-              numRound: 6,
-              numWins: 0,
-              isWinner: false,
-              suffix: 'th',
-            },
-          ],
-          numGamesPlayed: 2,
-          numAllTimeWins: 0,
-          winPercentage: 0,
-        },
-        completedPuzzles: ['lunar'],
-      });
-
-      // increment num games by 1
-      storageSvc.saveNumGames(3);
-
-      // trigger first win
-      const numWinningRound = 3;
-      storageSvc.saveWinData(numWinningRound, mockSolution);
-
-      const storedLocalData = storageSvc.getLocalStorageData();
-
-      // 3 games and 1 win = 33%
-      const expectedWinPercentage = 33;
-      expect(storedLocalData?.stats.winPercentage).toEqual(
-        expectedWinPercentage
-      );
-    });
-
     it('should save winning puzzles', () => {
       const numWinningRound = 3;
       storageSvc.saveWinData(numWinningRound, mockSolution);
@@ -372,15 +306,92 @@ describe('StorageService', () => {
   });
 
   describe('saveNumGames', () => {
-    it('should save the number of games played', () => {
-      let storedData = storageSvc.getLocalStorageData();
-      expect(storedData).toBeNull();
+    let numGamesPlayed: number;
 
-      const numGamesPlayed = 5;
-      storageSvc.saveNumGames(numGamesPlayed);
+    beforeEach(() => {
+      numGamesPlayed = 2;
 
-      storedData = storageSvc.getLocalStorageData();
-      expect(storedData?.stats.numGamesPlayed).toEqual(numGamesPlayed);
+      // pre-seed with data
+      storageSvc.setLocalStorageData({
+        stats: {
+          guessDistribution: [
+            {
+              numRound: 1,
+              numWins: 1,
+              isWinner: true,
+              suffix: 'st',
+            },
+            {
+              numRound: 2,
+              numWins: 0,
+              isWinner: false,
+              suffix: 'nd',
+            },
+            {
+              numRound: 3,
+              numWins: 0,
+              isWinner: false,
+              suffix: 'rd',
+            },
+            {
+              numRound: 4,
+              numWins: 0,
+              isWinner: false,
+              suffix: 'th',
+            },
+            {
+              numRound: 5,
+              numWins: 0,
+              isWinner: false,
+              suffix: 'th',
+            },
+            {
+              numRound: 6,
+              numWins: 0,
+              isWinner: false,
+              suffix: 'th',
+            },
+          ],
+          numGamesPlayed,
+          numAllTimeWins: 1,
+          winPercentage: 0,
+        },
+        completedPuzzles: ['lunar'],
+      });
+    });
+
+    it('should increment and save the number of games played', () => {
+      const hasWonGame = false;
+      storageSvc.saveNumGames(hasWonGame);
+
+      const storedData = storageSvc.getLocalStorageData();
+      expect(storedData?.stats.numGamesPlayed).toEqual((numGamesPlayed += 1));
+    });
+
+    it('should calculate and store win % when game won', () => {
+      const hasWonGame = true;
+      storageSvc.saveNumGames(hasWonGame);
+
+      const storedLocalData = storageSvc.getLocalStorageData();
+
+      // 3 games and 2 win = 66%
+      const expectedWinPercentage = 66;
+      expect(storedLocalData?.stats.winPercentage).toEqual(
+        expectedWinPercentage
+      );
+    });
+
+    it('should calculate and store win % when game lost', () => {
+      const hasWonGame = false;
+      storageSvc.saveNumGames(hasWonGame);
+
+      const storedLocalData = storageSvc.getLocalStorageData();
+
+      // 3 games and 1 win = 33%
+      const expectedWinPercentage = 33;
+      expect(storedLocalData?.stats.winPercentage).toEqual(
+        expectedWinPercentage
+      );
     });
   });
 

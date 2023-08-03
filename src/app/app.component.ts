@@ -334,7 +334,7 @@ export class AppComponent implements OnInit {
   private _incrementGameCount(): void {
     this._numPlayedSession += 1;
     this._numPlayedAllTime += 1;
-    this._storageSvc.saveNumGames(this._numPlayedAllTime);
+    this._storageSvc.saveNumGames(this.hasWonGame);
   }
 
   private _newGame(): void {
@@ -432,11 +432,11 @@ export class AppComponent implements OnInit {
     const isGameOver = numNextRound === this._numRounds || this.hasWonGame;
 
     if (isGameOver) {
-      this._saveGameTime();
       this._incrementGameCount();
     }
 
     if (this.hasWonGame) {
+      this._saveGameTime();
       this._storageSvc.saveWinData(this._currentRoundIndex, this._solution);
     }
   }
