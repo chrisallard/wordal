@@ -79,7 +79,6 @@ export class AppComponent implements OnInit {
   private _numRounds: number = GameParamsEnum.NumRounds;
   private _solution: string = '';
 
-  gameTime: number = 0;
   hasWonGame: boolean = false;
   haveTilesBounced: boolean = false;
   isBoardLocked: boolean = true;
@@ -385,7 +384,6 @@ export class AppComponent implements OnInit {
   private _resetGameBoard(): void {
     this._currentRoundIndex = 0;
     this._guessSvc.reset();
-    this.gameTime = 60;
     this.hasWonGame = false;
     this.haveTilesBounced = false;
     this.isBoardLocked = true;
