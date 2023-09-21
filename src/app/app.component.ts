@@ -26,7 +26,7 @@ import {
   SpecialKeysEnum,
   ToastrMessagesEnum,
 } from '@app/ts/enums';
-import { IRound } from '@app/ts/interfaces';
+import { IHints, IRound, IStoredSettings } from '@app/ts/interfaces';
 import { calcElapsedTime } from '@app/utils/calc-elapsed-time.utils';
 import { GoogleAnalyticsService } from '@services/analytics/google-analytics.service';
 import { MakeToast } from '@services/make-toast/make-toast.service';
@@ -72,14 +72,15 @@ export class AppComponent implements OnInit {
     headShakeVibDuration,
     headShakeVibPause,
   ];
+  private _hintsFound: IHints[] = [];
   private _isFastestTime: boolean = false;
   private _numLastDonationGame: number = 0;
   private _numPlayedAllTime: number = 0;
   private _numPlayedSession: number = 0;
   private _numRounds: number = GameParamsEnum.NumRounds;
+  private _settings!: IStoredSettings | null;
   private _solution: string = '';
 
-  gameTime: number = 0;
   hasWonGame: boolean = false;
   haveTilesBounced: boolean = false;
   isBoardLocked: boolean = true;
@@ -180,6 +181,38 @@ export class AppComponent implements OnInit {
         return;
       }
 
+      if (this._settings?.hardMode && this._hintsFound.length) {
+        const prevFoundLetters: Array<any> = this._hintsFound.map((hint) => {
+          return hint.value;
+        });
+
+        if (!prevFoundLetters.every((letter) => letters.includes(letter))) {
+          const missingHints = prevFoundLetters.filter(
+            (hint: string) => !letters.includes(hint)
+          );
+          this._toastr.makeToast({
+            message: `You must use: ${missingHints.join(', ').toUpperCase()}`,
+          });
+          return;
+        }
+
+        const correctHints = this._hintsFound.filter((hint) => hint.isCorrect);
+        if (correctHints) {
+          for (let i = 0; i < correctHints.length; i = i + 1) {
+            if (letters[correctHints[i].index] !== correctHints[i].value) {
+              const correctLetter = correctHints[i].value
+                ? correctHints[i].value?.toUpperCase()
+                : '';
+
+              this._toastr.makeToast({
+                message: `${correctLetter} must be in the ${correctHints[i].nonZeroIndex} spot.`,
+              });
+              return;
+            }
+          }
+        }
+      }
+
       const guessedWord = letters.join('');
       this._verifyWord(guessedWord);
 
@@ -208,6 +241,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._storageSvc.settings$.subscribe((settings) => {
+      this._settings = settings;
+    });
+
+    this._storageSvc.setDefaultSettings();
+
     this._numPlayedAllTime = this._storageSvc.getGamesPlayedCount();
 
     this._pwa.checkForUpdateFlag();
@@ -277,6 +316,10 @@ export class AppComponent implements OnInit {
       eventName: 'navigation',
       eventCategory: 'side-nav',
     });
+  }
+
+  openSettings(): void {
+    this._modalSvc.openModal(ModalNameEnum.Settings);
   }
 
   reloadWin(): void {
@@ -385,11 +428,11 @@ export class AppComponent implements OnInit {
   private _resetGameBoard(): void {
     this._currentRoundIndex = 0;
     this._guessSvc.reset();
-    this.gameTime = 60;
     this.hasWonGame = false;
     this.haveTilesBounced = false;
     this.isBoardLocked = true;
     this.rounds = getPristineGameModel();
+    this._hintsFound = [];
   }
 
   private _saveGameTime(): void {
@@ -418,6 +461,19 @@ export class AppComponent implements OnInit {
     const activeRound = this.rounds[this._currentRoundIndex];
     // updates tiles
     activeRound.guesses = getGuessState(guessedWord, this._solution);
+
+    if (this._settings?.hardMode) {
+      const hints = activeRound.guesses
+        .filter((guess) => guess.isCorrect || guess.isPresent)
+        .map((guess) => {
+          const index = activeRound.guesses.indexOf(guess);
+          const nonZeroIndex = index + 1;
+          return { ...guess, index, nonZeroIndex };
+        }) as IHints[];
+
+      this._hintsFound = Array.from(new Set(hints));
+    }
+
     // updates keyboard
     this._guessSvc.updateGuess(activeRound.guesses);
 

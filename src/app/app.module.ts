@@ -18,6 +18,7 @@ import { InstructionsComponent } from '@components/instructions/instructions.com
 import { KeyboardComponent } from '@components/keyboard/keyboard.component';
 import { ModalComponent } from '@components/modal/modal.component';
 import { RotationLockComponent } from '@components/rotation-lock/rotation-lock.component';
+import { SettingsComponent } from '@components/settings/settings.component';
 import { SideNavComponent } from '@components/side-nav/side-nav.component';
 import { TileComponent } from '@components/tile/tile.component';
 import { ConfettiCannonDirective } from '@directives/confetti-cannon.directive';
@@ -47,6 +48,7 @@ import { environment } from 'src/environments/environment';
     TileComponent,
     TrapFocusDirective,
     RotationLockComponent,
+    SettingsComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -65,7 +67,7 @@ import { environment } from 'src/environments/environment';
         ...{
           animationDuration: 400,
           bodyClass: MODAL_BODY_CLASS,
-          closeOnClickOutside: false,
+          closeOnClickOutside: true,
           closeOnEscape: true,
           wrapperClass: 'in',
           wrapperDefaultClasses: 'modal fade-anim',

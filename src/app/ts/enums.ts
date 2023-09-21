@@ -25,6 +25,7 @@ export enum ModalNameEnum {
   Definition = 'definition',
   Donation = 'donation',
   Instructions = 'instructions',
+  Settings = 'settings',
   Stats = 'extended stats',
   Summary = 'summary',
 }
@@ -46,6 +47,10 @@ export enum SpecialKeysEnum {
   Refresh_Label = 'new game',
   Submit = 'submit',
   Tab = 'tab',
+}
+
+export enum SettingsTypeEnum {
+  HardMode = 'hardMode',
 }
 
 export enum ToastrMessagesEnum {

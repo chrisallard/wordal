@@ -1,0 +1,39 @@
+@import "vars";
+
+.settings-container {
+  padding: 20px;
+}
+
+.settings {
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+}
+
+.setting-option {
+  margin-right: 20px;
+}
+
+.option-desc {
+  font-size: 14px;
+  color: $color-grey-600;
+}
+
+.btn-toggle {
+  background: none;
+  border: none;
+  line-height: 0;
+}
+
+.toggle-icon {
+  font-size: 44px;
+  transition: color 0.25s;
+}
+
+.option-enabled {
+  color: $color-green;
+}
+
+.option-disabled {
+  color: $color-grey-500;
+}

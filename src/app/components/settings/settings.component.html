@@ -1,0 +1,34 @@
+<app-modal
+  label="Settngs Modal"
+  modalTitle="Settings"
+  tagline=""
+  (close)="close()"
+>
+  <div class="settings-container">
+    <div class="settings">
+      <div class="option">
+        <div class="option-title">Hard Mode</div>
+        <div class="option-desc">
+          Any hints discovered must be used in future guesses.
+        </div>
+      </div>
+      <button
+        aria-label="Hard Mode"
+        class="btn-toggle"
+        role="switch"
+        [attr.aria-checked]="settings.hardMode"
+        (click)="toggleSetting(settingTypes.HardMode, !settings.hardMode)"
+      >
+        <span
+          class="material-symbols-outlined toggle-icon"
+          [class]="{
+            'option-enabled': settings.hardMode,
+            'option-disabled': !settings.hardMode
+          }"
+        >
+          {{ settings.hardMode ? "toggle_on" : "toggle_off" }}
+        </span>
+      </button>
+    </div>
+  </div>
+</app-modal>

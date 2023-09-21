@@ -28,8 +28,8 @@
   <div class="header">
     <div class="nav">
       <button
-        aria-label="Navigation menu."
-        class="btn-nav-open"
+        aria-label="Navigation menu"
+        class="btn-open-menu"
         type="button"
         (click)="openNav()"
       >
@@ -40,6 +40,17 @@
     <h1 class="title">
       <span class="glow">Wordal</span>
     </h1>
+
+    <div class="settings">
+      <button
+        aria-label="Settings menu"
+        class="btn-open-menu"
+        type="button"
+        (click)="openSettings()"
+      >
+        <span class="material-symbols-outlined settings-icon">settings</span>
+      </button>
+    </div>
   </div>
 
   <div class="inner-container">

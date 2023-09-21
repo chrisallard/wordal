@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { LOCAL_STORAGE_KEY, SESSION_STORAGE_KEY } from '@app/config/app.config';
-import { IDistribution, IGameDuration, IStoredData } from '@app/ts/interfaces';
+import { SettingsTypeEnum } from '@app/ts/enums';
+import {
+  IDistribution,
+  IGameDuration,
+  IStoredData,
+  IStoredSettings,
+} from '@app/ts/interfaces';
+import { Subject } from 'rxjs';
 
 const zeroWins = 0;
 export const distributionModel = [
@@ -15,6 +22,9 @@ export const distributionModel = [
   providedIn: 'root',
 })
 export class StorageService {
+  private _settings$ = new Subject<IStoredSettings>();
+  settings$ = this._settings$.asObservable();
+
   getFastestWinTime = (): string =>
     this.getLocalStorageData()?.stats?.fastestTime?.readableTime || '';
 
@@ -118,6 +128,60 @@ export class StorageService {
 
   setLocalStorageData(data: object): void {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+  }
+
+  setDefaultSettings(): void {
+    const defaultSettings: any = {
+      settings: {},
+    };
+
+    const settingNames: Array<string> = [];
+    const storedData = this.getLocalStorageData();
+
+    for (const [key, val] of Object.entries(SettingsTypeEnum)) {
+      settingNames.push(val);
+      // all settuings are disabled by default
+      defaultSettings.settings[val] = false;
+    }
+
+    if (storedData?.settings) {
+      const existingSettings = { ...storedData.settings } as any;
+
+      // SettingsTypeEnum is the single source of truth. If there is a
+      // settiing in storage that isnt found in the enum it is removed
+      for (const prop in existingSettings) {
+        if (!settingNames.includes(prop)) {
+          delete existingSettings[prop];
+        }
+      }
+
+      // add any new settings to existing ones
+      defaultSettings.settings = {
+        ...defaultSettings.settings,
+        ...existingSettings,
+      };
+    }
+
+    this.setLocalStorageData({
+      ...(storedData || {}),
+      ...defaultSettings,
+    });
+
+    this._settings$.next(defaultSettings.settings);
+  }
+
+  saveSettings(data: IStoredSettings): void {
+    const storedData = this.getLocalStorageData();
+
+    const update = {
+      ...(storedData || {}),
+      settings: {
+        ...(storedData?.settings || {}),
+        ...data,
+      },
+    };
+    this.setLocalStorageData(update);
+    this._settings$.next(update.settings);
   }
 
   private _saveGuessDistribution(numWinningRound: number): void {
