@@ -95,7 +95,11 @@
           </ng-container>
         </div>
       </ng-container>
+      <div *ngIf="settings?.hardMode" class="indicator" [@indicator]>
+        <span class="hard-mode-indicator">Hard Mode</span>
+      </div>
     </div>
+
     <app-keyboard
       (keyPress)="handleKeyPress($event)"
       [isBoardLocked]="isBoardLocked"
