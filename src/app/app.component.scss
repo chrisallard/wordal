@@ -118,6 +118,24 @@
   display: flex;
 }
 
+.indicator {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.hard-mode-indicator {
+  animation: flipInX 1.75s;
+  border-bottom: 1px dotted $color-grey-500;
+  border-top: 1px dotted $color-grey-500;
+  color: $color-light-blue;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  padding: 8px 4px;
+  text-transform: uppercase;
+}
+
 ::ng-deep {
   .toast-container {
     z-index: $toastr-z-index;

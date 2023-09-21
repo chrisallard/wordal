@@ -1,8 +1,11 @@
 import {
+  animate,
   animateChild,
   AnimationEvent,
+  keyframes,
   query,
   stagger,
+  style,
   transition,
   trigger,
 } from '@angular/animations';
@@ -61,6 +64,33 @@ import { environment } from 'src/environments/environment';
     trigger('headShake', [
       getHeadShakeAnimation({ fromState: 'false', toState: 'true' }),
     ]),
+    trigger('indicator', [
+      transition(':leave', [
+        query(
+          '.hard-mode-indicator',
+          animate(
+            '500ms',
+            keyframes([
+              style({
+                transform: 'perspective(400px)',
+                offset: 0,
+                opacity: 1,
+              }),
+              style({
+                transform: 'perspective(400px) rotate3d(1, 0, 0, -20deg)',
+                offset: 0.3,
+                opacity: 1,
+              }),
+              style({
+                transform: 'perspective(400px) rotate3d(1, 0, 0, 90deg)',
+                offset: 1,
+                opacity: 0,
+              }),
+            ])
+          )
+        ),
+      ]),
+    ]),
   ],
 })
 export class AppComponent implements OnInit {
@@ -78,7 +108,6 @@ export class AppComponent implements OnInit {
   private _numPlayedAllTime: number = 0;
   private _numPlayedSession: number = 0;
   private _numRounds: number = GameParamsEnum.NumRounds;
-  private _settings!: IStoredSettings | null;
   private _solution: string = '';
 
   hasWonGame: boolean = false;
@@ -89,6 +118,7 @@ export class AppComponent implements OnInit {
   isVersionUpdated: boolean = false;
   roundFinish = RoundFinishTypeEnum;
   rounds: IRound[] = getPristineGameModel();
+  settings!: IStoredSettings | null;
   shouldClearBoard: boolean = false;
 
   constructor(
@@ -181,7 +211,7 @@ export class AppComponent implements OnInit {
         return;
       }
 
-      if (this._settings?.hardMode && this._hintsFound.length) {
+      if (this.settings?.hardMode && this._hintsFound.length) {
         const prevFoundLetters: Array<any> = this._hintsFound.map((hint) => {
           return hint.value;
         });
@@ -242,7 +272,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this._storageSvc.settings$.subscribe((settings) => {
-      this._settings = settings;
+      this.settings = settings;
     });
 
     this._storageSvc.setDefaultSettings();
@@ -462,7 +492,7 @@ export class AppComponent implements OnInit {
     // updates tiles
     activeRound.guesses = getGuessState(guessedWord, this._solution);
 
-    if (this._settings?.hardMode) {
+    if (this.settings?.hardMode) {
       const hints = activeRound.guesses
         .filter((guess) => guess.isCorrect || guess.isPresent)
         .map((guess) => {
