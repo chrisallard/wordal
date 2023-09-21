@@ -80,12 +80,11 @@ describe('GuessService', () => {
       guess$.pipe(skip(2)).subscribe((model) => {
         // 'e' should still be correct
         expect(model.e).toEqual(mockModel.e);
-        done();
       });
 
       // mark 'e' as correct
       service.updateGuess(mockUpdates);
-      // attmpt to undo that change
+      // attempt to undo that change
       service.updateGuess([
         {
           isCorrect: false,

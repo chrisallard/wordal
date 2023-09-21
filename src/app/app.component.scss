@@ -66,27 +66,22 @@
 }
 
 .header {
+  align-items: center;
   border-bottom: 1px dotted $color-grey-200;
+  display: flex;
   margin-bottom: 3vh;
-  position: relative;
   width: 100%;
 }
 
 .nav {
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
   margin-left: 20px;
-  position: absolute;
-  top: 0;
-
-  @media (max-width: $xs-screen-width) {
-    padding: 0;
-  }
 }
 
-.btn-nav-open {
+.settings {
+  margin-right: 20px;
+}
+
+.btn-open-menu {
   background: none;
   border-radius: $border-radius;
   border: none;
@@ -95,6 +90,7 @@
 
 .title {
   color: $color-white;
+  flex: 1;
   font-family: $brand-font-family;
   font-size: 6vh;
   text-align: center;

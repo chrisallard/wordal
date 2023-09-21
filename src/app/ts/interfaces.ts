@@ -52,6 +52,11 @@ export interface IGuess {
   value?: string | null;
 }
 
+export interface IHints extends IGuess {
+  index: number;
+  nonZeroIndex: number;
+}
+
 export interface IKeyBoard {
   [key: string]: IGuess;
 }
@@ -85,6 +90,7 @@ export interface IStoredData {
   instructions?: {
     viewed: boolean;
   };
+  settings?: IStoredSettings;
   stats: {
     fastestTime?: {
       elapsedMilliseconds: number;
@@ -95,6 +101,10 @@ export interface IStoredData {
     numAllTimeWins?: number;
     winPercentage?: number;
   };
+}
+
+export interface IStoredSettings {
+  hardMode: boolean;
 }
 
 export interface IWord {

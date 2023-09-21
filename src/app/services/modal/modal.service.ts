@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { AboutComponent } from '@app/components/about/about.component';
-import { DefinitionComponent } from '@app/components/definition/definition.component';
-import { StatsComponent } from '@app/components/stats/stats.component';
 import { ModalNameEnum } from '@app/ts/enums';
+import { AboutComponent } from '@components/about/about.component';
 import { ConfirmDialogueComponent } from '@components/confirm-dialogue/confirm-dialogue.component';
+import { DefinitionComponent } from '@components/definition/definition.component';
 import { DonateComponent } from '@components/donate/donate.component';
 import { InstructionsComponent } from '@components/instructions/instructions.component';
+import { SettingsComponent } from '@components/settings/settings.component';
+import { StatsComponent } from '@components/stats/stats.component';
 import { SummaryComponent } from '@components/summary/summary.component';
 import { SimpleModalService } from 'ngx-simple-modal';
 import { throwError } from 'rxjs';
@@ -35,6 +36,9 @@ export class ModalService {
       case ModalNameEnum.Donation:
         component = DonateComponent;
         break;
+      case ModalNameEnum.Settings:
+        component = SettingsComponent;
+        break;
       case ModalNameEnum.Stats:
         component = StatsComponent;
         break;
@@ -49,15 +53,16 @@ export class ModalService {
     if (shouldCloseOthers) {
       this._modal.removeAll();
     }
+
     if (component) {
       return this._modal.addModal(component, args);
-    } else {
-      return throwError(() => {
-        const error: any = new Error(
-          `ModalService: Invalid component reference. Check the spelling and try again.`
-        );
-        return error;
-      });
     }
+
+    return throwError(() => {
+      const error: any = new Error(
+        `ModalService: Invalid component reference. Check the spelling and try again.`
+      );
+      return error;
+    });
   }
 }
