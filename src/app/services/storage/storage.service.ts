@@ -140,15 +140,17 @@ export class StorageService {
 
     for (const [key, val] of Object.entries(SettingsTypeEnum)) {
       settingNames.push(val);
-      // all settuings are disabled by default
+      // all settings are disabled by default
       defaultSettings.settings[val] = false;
     }
 
     if (storedData?.settings) {
       const existingSettings = { ...storedData.settings } as any;
 
-      // SettingsTypeEnum is the single source of truth. If there is a
-      // settiing in storage that isnt found in the enum it is removed
+      /*
+       * SettingsTypeEnum is the single source of truth. If there is a
+       * setting in storage that isnt found in the enum it is removed
+       */
       for (const prop in existingSettings) {
         if (!settingNames.includes(prop)) {
           delete existingSettings[prop];
