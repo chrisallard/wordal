@@ -25,8 +25,12 @@
 }
 
 .about-desc {
-  flex: 1;
+  flex: 1.5;
   margin-left: 10px;
+}
+
+.about-thanks-desc {
+  white-space: nowrap;
 }
 
 .heart-icon {
