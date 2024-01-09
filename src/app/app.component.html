@@ -96,7 +96,14 @@
         </div>
       </ng-container>
       <div *ngIf="settings?.hardMode" class="indicator" [@indicator]>
-        <span class="hard-mode-indicator">Hard Mode</span>
+        <button
+          aria-label="Settings menu"
+          class="hard-mode-indicator"
+          title="View Settings"
+          (click)="openSettings()"
+        >
+          Hard Mode
+        </button>
       </div>
     </div>
 
