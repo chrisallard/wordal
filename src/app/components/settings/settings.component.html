@@ -5,10 +5,10 @@
   (close)="close()"
 >
   <div class="settings-container">
-    <div class="settings">
-      <div class="option">
-        <div class="option-title">Hard Mode</div>
-        <div class="option-desc">
+    <div class="setting">
+      <div>
+        <div class="setting-title">Hard Mode</div>
+        <div class="setting-desc">
           Any hints discovered must be used in future guesses.
         </div>
       </div>
@@ -20,15 +20,24 @@
         (click)="toggleSetting(settingTypes.HardMode, !settings.hardMode)"
       >
         <span
-          class="material-symbols-outlined toggle-icon"
+          class="material-symbols-outlined setting-icon"
           [class]="{
-            'option-enabled': settings.hardMode,
-            'option-disabled': !settings.hardMode
+            'setting-enabled': settings.hardMode,
+            'setting-disabled': !settings.hardMode
           }"
         >
           {{ settings.hardMode ? "toggle_on" : "toggle_off" }}
         </span>
       </button>
+    </div>
+    <div class="setting">
+      <div>
+        <div class="setting-title">Feedback</div>
+        <div class="setting-desc">
+          Have a question, an idea, or a suggestion?
+        </div>
+      </div>
+      <a href="mailto:feedback@wordalgame.com" class="feedback-email">Email</a>
     </div>
   </div>
 </app-modal>
