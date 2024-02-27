@@ -50,9 +50,11 @@ export interface IGuess {
   row?: number;
   state?: GuessFeedbackEnum;
   value?: string | null;
+  correctLetter?: string;
+  hasRevealedHint?: boolean;
 }
 
-export interface IHints extends IGuess {
+export interface IDiscoveredLetters extends IGuess {
   index: number;
   nonZeroIndex: number;
 }
@@ -72,6 +74,7 @@ export interface IRound {
   isRoundComplete: boolean;
   isWinningRound: boolean;
   letters: Array<string>;
+  isActiveRound: boolean;
 }
 
 export interface ISimpleMessage {

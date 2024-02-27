@@ -7,12 +7,13 @@
     active: isActive && !isEnterKey,
     disabled: isDisabled,
     'special-btn': isIconKey,
-    'submit-btn': isEnterKey
+    'submit-btn': isEnterKey,
+    'hint-btn': isHintKey
   }"
   [@keyColor]="isIconKey || isEnterKey ? '' : key.state"
   (click)="keyPress()"
 >
-  <span [class.material-symbols-outlined]="isIconKey">
+  <span [class.material-symbols-outlined]="isIconKey || isHintKey">
     {{ key.alias ? key.alias : key.value }}</span
   >
 </button>

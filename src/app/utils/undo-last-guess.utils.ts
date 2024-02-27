@@ -19,6 +19,7 @@ export function undoLastGuess(currentRound: IRound) {
 
     // applies cursor to first empty tile
     round.guesses[lastEnteredLetterIndex] = {
+      ...round.guesses[lastEnteredLetterIndex],
       isActive: true,
     };
   }

@@ -9,6 +9,15 @@
   >
     <span class="cursor" *ngIf="guess.isActive"></span>
     <span class="letter">{{ letter }}</span>
+    <span
+      class="hint"
+      [@hint]="
+        isActiveRound && !isHintVisible && !shouldFlip ? 'slideInDown' : ''
+      "
+      (@hint.done)="onHintDisplayed($event)"
+      *ngIf="!letter && hint && isActiveRound"
+      >{{ hint }}</span
+    >
   </div>
 </ng-template>
 <div
@@ -20,7 +29,8 @@
     <div
       class="flip-tile-front"
       [attr.aria-hidden]="shouldFlip"
-      [class.tile-filled]="letter"
+      [class.tile-filled]="letter && letter !== hint"
+      [class.hint-used]="letter === hint"
     >
       <ng-container *ngTemplateOutlet="tile"></ng-container>
     </div>

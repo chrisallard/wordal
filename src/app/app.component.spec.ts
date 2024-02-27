@@ -2,11 +2,14 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
-import { SwUpdate } from '@angular/service-worker';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { AppComponent } from '@app/app.component';
+import { KeyboardComponent } from '@components/keyboard/keyboard.component';
+import { RotationLockComponent } from '@components/rotation-lock/rotation-lock.component';
+import { SideNavComponent } from '@components/side-nav/side-nav.component';
 import { SimpleModalService } from 'ngx-simple-modal';
 import { ToastrModule } from 'ngx-toastr';
 import { of } from 'rxjs';
-import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -20,8 +23,14 @@ describe('AppComponent', () => {
         BrowserAnimationsModule,
         HttpClientTestingModule,
         ToastrModule.forRoot(),
+        ServiceWorkerModule.register('', { enabled: false }),
       ],
-      declarations: [AppComponent],
+      declarations: [
+        AppComponent,
+        RotationLockComponent,
+        SideNavComponent,
+        KeyboardComponent,
+      ],
       providers: [
         {
           provide: SimpleModalService,
@@ -31,13 +40,6 @@ describe('AppComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             queryParams: of({}),
-          },
-        },
-        {
-          provide: SwUpdate,
-          useValue: {
-            isEnabled: true,
-            checkForUpdate: Promise.resolve(),
           },
         },
       ],

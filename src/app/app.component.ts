@@ -1,11 +1,8 @@
 import {
-  animate,
   animateChild,
   AnimationEvent,
-  keyframes,
   query,
   stagger,
-  style,
   transition,
   trigger,
 } from '@angular/animations';
@@ -13,6 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ApplicationRef, Component, HostListener, OnInit } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { getBoardClearAnimation } from '@app/animations/board-clear.animation';
+import { flipOutX } from '@app/animations/flip-out-x.animation';
 import {
   getHeadShakeAnimation,
   headShakeVibDuration,
@@ -29,7 +27,11 @@ import {
   SpecialKeysEnum,
   ToastrMessagesEnum,
 } from '@app/ts/enums';
-import { IHints, IRound, IStoredSettings } from '@app/ts/interfaces';
+import {
+  IDiscoveredLetters,
+  IRound,
+  IStoredSettings,
+} from '@app/ts/interfaces';
 import { calcElapsedTime } from '@app/utils/calc-elapsed-time.utils';
 import { GoogleAnalyticsService } from '@services/analytics/google-analytics.service';
 import { MakeToast } from '@services/make-toast/make-toast.service';
@@ -65,31 +67,7 @@ import { environment } from 'src/environments/environment';
       getHeadShakeAnimation({ fromState: 'false', toState: 'true' }),
     ]),
     trigger('indicator', [
-      transition(':leave', [
-        query(
-          '.hard-mode-indicator',
-          animate(
-            '500ms',
-            keyframes([
-              style({
-                transform: 'perspective(400px)',
-                offset: 0,
-                opacity: 1,
-              }),
-              style({
-                transform: 'perspective(400px) rotate3d(1, 0, 0, -20deg)',
-                offset: 0.3,
-                opacity: 1,
-              }),
-              style({
-                transform: 'perspective(400px) rotate3d(1, 0, 0, 90deg)',
-                offset: 1,
-                opacity: 0,
-              }),
-            ])
-          )
-        ),
-      ]),
+      transition(':leave', [query('.hard-mode-indicator', flipOutX())]),
     ]),
   ],
 })
@@ -102,9 +80,11 @@ export class AppComponent implements OnInit {
     headShakeVibDuration,
     headShakeVibPause,
   ];
-  private _hintsFound: IHints[] = [];
+  private _lettersDiscovered: IDiscoveredLetters[] = [];
   private _isFastestTime: boolean = false;
   private _numLastDonationGame: number = 0;
+  private _numGuessesInRound: number = GameParamsEnum.NumGuesses;
+  private _numHintsRemaining: number = GameParamsEnum.NumHints;
   private _numPlayedAllTime: number = 0;
   private _numPlayedSession: number = 0;
   private _numRounds: number = GameParamsEnum.NumRounds;
@@ -115,6 +95,7 @@ export class AppComponent implements OnInit {
   isBoardLocked: boolean = true;
   isNavOpen: boolean = false;
   isNewVersionAvailable: boolean = false;
+  isStartingNewGame: boolean = true;
   isVersionUpdated: boolean = false;
   roundFinish = RoundFinishTypeEnum;
   rounds: IRound[] = getPristineGameModel();
@@ -177,6 +158,10 @@ export class AppComponent implements OnInit {
       return;
     }
 
+    if (this.isStartingNewGame) {
+      this.isStartingNewGame = false;
+    }
+
     const vibrationDuration = 10;
     vibrateDevice(vibrationDuration);
 
@@ -211,31 +196,35 @@ export class AppComponent implements OnInit {
         return;
       }
 
-      if (this.settings?.hardMode && this._hintsFound.length) {
-        const prevFoundLetters: Array<any> = this._hintsFound.map((hint) => {
-          return hint.value;
-        });
+      if (this.settings?.hardMode && this._lettersDiscovered.length) {
+        const prevFoundLetters: Array<any> = this._lettersDiscovered.map(
+          (hint) => {
+            return hint.value;
+          }
+        );
 
         if (!prevFoundLetters.every((letter) => letters.includes(letter))) {
-          const missingHints = prevFoundLetters.filter(
-            (hint: string) => !letters.includes(hint)
+          const missingLetters = prevFoundLetters.filter(
+            (letter: string) => !letters.includes(letter)
           );
           this._toastr.makeToast({
-            message: `You must use: ${missingHints.join(', ').toUpperCase()}`,
+            message: `You must use: ${missingLetters.join(', ').toUpperCase()}`,
           });
           return;
         }
 
-        const correctHints = this._hintsFound.filter((hint) => hint.isCorrect);
-        if (correctHints) {
-          for (let i = 0; i < correctHints.length; i = i + 1) {
-            if (letters[correctHints[i].index] !== correctHints[i].value) {
-              const correctLetter = correctHints[i].value
-                ? correctHints[i].value?.toUpperCase()
+        const correctLetters = this._lettersDiscovered.filter(
+          (letter) => letter.isCorrect
+        );
+        if (correctLetters) {
+          for (let i = 0; i < correctLetters.length; i = i + 1) {
+            if (letters[correctLetters[i].index] !== correctLetters[i].value) {
+              const correctLetter = correctLetters[i].value
+                ? correctLetters[i].value?.toUpperCase()
                 : '';
 
               this._toastr.makeToast({
-                message: `${correctLetter} must be in the ${correctHints[i].nonZeroIndex} spot.`,
+                message: `${correctLetter} must be in the ${correctLetters[i].nonZeroIndex} spot.`,
               });
               return;
             }
@@ -267,6 +256,21 @@ export class AppComponent implements OnInit {
       if (isFirstInteraction) {
         this._gameStartTime = Date.now();
       }
+
+      return;
+    }
+
+    /*
+     * This check prevents a scenario where the hint button was clicked,
+     * giving it focus, and then thhe 'Enter' key on a keyboard was used to Submut a guess.
+     * Since the hint button has focus it will trigger another hint deployment
+     * even though that is not the user's desire.
+     */
+    const numFinalGuess = this._numGuessesInRound - 1;
+    const areThereEmptyTiles = activeRound.letters[numFinalGuess] === undefined;
+
+    if (key === SpecialKeysEnum.Hint && areThereEmptyTiles) {
+      this._showHint();
     }
   }
 
@@ -284,6 +288,8 @@ export class AppComponent implements OnInit {
       this.isVersionUpdated = isFlagPresent;
     });
     this._displayInstructions();
+
+    this.rounds[this._currentRoundIndex].isActiveRound = true;
   }
 
   // new game animation event handler (on complete)
@@ -329,6 +335,8 @@ export class AppComponent implements OnInit {
     if (event.toState === this.roundFinish.Completed) {
       // not the final round and puzzle is unsolved
       if (numRound !== numFinalRound) {
+        this.rounds[this._currentRoundIndex - 1].isActiveRound = false;
+        this.rounds[this._currentRoundIndex].isActiveRound = true;
         this._setCursorToFirstPos();
         this.isBoardLocked = false;
       } else {
@@ -425,6 +433,13 @@ export class AppComponent implements OnInit {
           this._puzzleSvc.getPuzzle().subscribe((newWord: string) => {
             this._solution = newWord;
 
+            // provides the correct letter (hint) for the tile
+            this.rounds.forEach((round) => {
+              round.guesses.forEach((guess, index) => {
+                guess.correctLetter = this._solution[index];
+              });
+            });
+
             if (!environment.production) {
               console.log(this._solution);
             }
@@ -458,11 +473,14 @@ export class AppComponent implements OnInit {
   private _resetGameBoard(): void {
     this._currentRoundIndex = 0;
     this._guessSvc.reset();
+    this._lettersDiscovered = [];
     this.hasWonGame = false;
     this.haveTilesBounced = false;
     this.isBoardLocked = true;
+    this.isStartingNewGame = true;
+    this._numHintsRemaining = GameParamsEnum.NumHints;
     this.rounds = getPristineGameModel();
-    this._hintsFound = [];
+    this.rounds[this._currentRoundIndex].isActiveRound = true;
   }
 
   private _saveGameTime(): void {
@@ -473,6 +491,47 @@ export class AppComponent implements OnInit {
 
   private _setCursorToFirstPos(): void {
     this.rounds[this._currentRoundIndex].guesses[0].isActive = true;
+  }
+
+  private _showHint(): void {
+    if (this._numHintsRemaining > 0) {
+      this._numHintsRemaining -= 1;
+      const currentRound = this.rounds[this._currentRoundIndex];
+      const currentGuesses = currentRound.guesses;
+
+      // collect slots to display hints, but only if the tile is unfilled
+      const unusedHintIndexes = currentGuesses.reduce(
+        (accumulator: Array<number>, currVal, currIndex) => {
+          if (
+            !currVal.hasRevealedHint &&
+            currIndex >= currentRound.letters.length
+          ) {
+            accumulator.push(currIndex);
+          }
+
+          return accumulator;
+        },
+        []
+      );
+
+      const randomHintIndex =
+        unusedHintIndexes[Math.floor(Math.random() * unusedHintIndexes.length)];
+
+      if (randomHintIndex > -1) {
+        for (let i = 0; i < this.rounds.length; i = i + 1) {
+          this.rounds[i].guesses[randomHintIndex] = {
+            ...this.rounds[i].guesses[randomHintIndex],
+            hasRevealedHint: true,
+          };
+        }
+      }
+    }
+
+    let pluralMsg = this._numHintsRemaining === 1 ? 'Hint' : 'Hints';
+
+    this._toastr.makeToast({
+      message: `${this._numHintsRemaining} ${pluralMsg} Remaining.`,
+    });
   }
 
   private _showSummaryModal(): void {
@@ -493,15 +552,15 @@ export class AppComponent implements OnInit {
     activeRound.guesses = getGuessState(guessedWord, this._solution);
 
     if (this.settings?.hardMode) {
-      const hints = activeRound.guesses
+      const letters = activeRound.guesses
         .filter((guess) => guess.isCorrect || guess.isPresent)
         .map((guess) => {
           const index = activeRound.guesses.indexOf(guess);
           const nonZeroIndex = index + 1;
           return { ...guess, index, nonZeroIndex };
-        }) as IHints[];
+        }) as IDiscoveredLetters[];
 
-      this._hintsFound = Array.from(new Set(hints));
+      this._lettersDiscovered = Array.from(new Set(letters));
     }
 
     // updates keyboard

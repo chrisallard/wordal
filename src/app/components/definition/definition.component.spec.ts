@@ -1,6 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DefinitionComponent } from './definition.component';
+import { DefinitionComponent } from '@components/definition/definition.component';
+import { ModalComponent } from '@components/modal/modal.component';
 
 describe('DefinitionComponent', () => {
   let component: DefinitionComponent;
@@ -9,7 +10,7 @@ describe('DefinitionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      declarations: [DefinitionComponent],
+      declarations: [DefinitionComponent, ModalComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DefinitionComponent);

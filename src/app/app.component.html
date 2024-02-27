@@ -91,10 +91,13 @@
               [letter]="round.letters[j]"
               [shouldBounce]="round.isWinningRound"
               [shouldFlip]="round.isRoundComplete"
+              [isActiveRound]="round.isActiveRound"
+              [isNewGame]="isStartingNewGame"
             ></app-tile>
           </ng-container>
         </div>
       </ng-container>
+
       <div *ngIf="settings?.hardMode" class="indicator" [@indicator]>
         <button
           aria-label="Settings menu"

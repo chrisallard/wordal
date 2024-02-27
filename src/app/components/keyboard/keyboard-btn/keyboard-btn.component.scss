@@ -22,6 +22,16 @@
   color: $color-black;
 }
 
+.hint-btn {
+  // !important required to override Angular animations inline style
+  background: none !important;
+  color: $color-orange !important;
+
+  & > .material-symbols-outlined {
+    font-size: 32px;
+  }
+}
+
 .submit-btn {
   @include btn-action;
 }

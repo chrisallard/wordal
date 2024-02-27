@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { KeyboardBtnComponent } from './keyboard-btn.component';
+import { KeyboardBtnComponent } from '@components/keyboard/keyboard-btn/keyboard-btn.component';
 
 describe('KeyboardBtnComponent', () => {
   let component: KeyboardBtnComponent;

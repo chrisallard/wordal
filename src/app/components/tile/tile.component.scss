@@ -83,3 +83,22 @@ $cursor-height: 4vh;
     }
   }
 }
+
+.hint,
+.hint-used {
+  background: $color-correct;
+  color: $color-white;
+}
+
+.hint {
+  bottom: 0;
+  left: 0;
+  opacity: 0.4;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.hint-used {
+  opacity: 1;
+}

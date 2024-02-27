@@ -66,6 +66,7 @@ export class GuessService {
       n: { row: 3 },
       m: { row: 3 },
       [SpecialKeysEnum.Backspace]: { row: 3, label: SpecialKeysEnum.Backspace },
+      [SpecialKeysEnum.Hint]: { row: 4, label: SpecialKeysEnum.Hint_Label },
       [SpecialKeysEnum.Enter]: {
         row: 4,
         alias: SpecialKeysEnum.Submit,

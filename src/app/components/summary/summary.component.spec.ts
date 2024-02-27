@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { IconBtnComponent } from '@components/buttons/icon-btn/icon-btn.component';
+import { ModalComponent } from '@components/modal/modal.component';
+import { SummaryComponent } from '@components/summary/summary.component';
 import { SimpleModalService } from 'ngx-simple-modal';
-import { SummaryComponent } from './summary.component';
 
 describe('SummaryComponent', () => {
   let component: SummaryComponent;
@@ -9,7 +11,7 @@ describe('SummaryComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       providers: [SimpleModalService],
-      declarations: [SummaryComponent],
+      declarations: [SummaryComponent, IconBtnComponent, ModalComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SummaryComponent);

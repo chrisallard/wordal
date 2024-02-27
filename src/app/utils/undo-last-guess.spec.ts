@@ -24,6 +24,7 @@ describe('undoLastGuess', () => {
           isActive: false,
         },
       ],
+      isActiveRound: false,
       isInvalidWord: false,
       isRoundComplete: false,
       isWinningRound: false,

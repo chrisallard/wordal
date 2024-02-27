@@ -17,6 +17,7 @@ export class KeyboardBtnComponent implements OnInit {
   @Output() press = new EventEmitter();
 
   isEnterKey: boolean = false;
+  isHintKey: boolean = false;
   isIconKey: boolean = false;
 
   ngOnInit(): void {
@@ -24,6 +25,8 @@ export class KeyboardBtnComponent implements OnInit {
 
     this.isIconKey =
       key === SpecialKeysEnum.Refresh || key === SpecialKeysEnum.Backspace;
+
+    this.isHintKey = key === SpecialKeysEnum.Hint;
     this.isEnterKey = key === SpecialKeysEnum.Enter;
   }
 

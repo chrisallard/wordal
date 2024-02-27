@@ -23,8 +23,9 @@ export class KeyboardComponent implements OnInit {
   activeKey: string = '';
   keyboard = [];
   specialKeys = {
-    enter: SpecialKeysEnum.Enter,
     backspace: SpecialKeysEnum.Backspace,
+    hint: SpecialKeysEnum.Hint,
+    enter: SpecialKeysEnum.Enter,
   };
 
   constructor(private _guessSvc: GuessService) {}
