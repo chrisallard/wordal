@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { StorageService } from '@app/services/storage/storage.service';
 import { SettingsTypeEnum } from '@app/ts/enums';
+import { ModalComponent } from '@components/modal/modal.component';
 import { SettingsComponent } from './settings.component';
 
 describe('SettingsComponent', () => {
@@ -21,7 +21,7 @@ describe('SettingsComponent', () => {
     });
 
     await TestBed.configureTestingModule({
-      declarations: [SettingsComponent],
+      declarations: [SettingsComponent, ModalComponent],
       providers: [{ provide: StorageService, useValue: storageSvcSpy }],
     }).compileComponents();
 

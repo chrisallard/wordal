@@ -1,6 +1,7 @@
 export enum GameParamsEnum {
   NumRounds = 6,
   NumGuesses = 5,
+  NumHints = NumGuesses - 1,
 }
 
 export enum GuessFeedbackEnum {
@@ -43,6 +44,8 @@ export enum RoundFinishTypeEnum {
 export enum SpecialKeysEnum {
   Backspace = 'backspace',
   Enter = 'enter',
+  Hint = 'mystery',
+  Hint_Label = 'get a hint',
   Refresh = 'restart_alt',
   Refresh_Label = 'new game',
   Submit = 'submit',

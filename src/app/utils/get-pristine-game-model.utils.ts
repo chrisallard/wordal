@@ -8,11 +8,13 @@ export function getPristineGameModel(): IRound[] {
     for (let i = 0; i < GameParamsEnum.NumGuesses; i = i + 1) {
       guesses.push({
         isActive: false,
+        hasRevealedHint: false,
       });
     }
 
     return {
       guesses,
+      isActiveRound: false,
       isInvalidWord: false,
       isRoundComplete: false,
       isWinningRound: false,

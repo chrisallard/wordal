@@ -37,13 +37,22 @@
 }
 
 .btn-submit {
-  flex: 0.25;
-
-  @media screen and (max-width: $xs-screen-width) {
-    flex: 0.5;
-  }
+  flex: 0.5;
 }
 
 .flex-spacer {
   flex: 0.5;
+}
+
+/*
+* To add a 'hint' button to the final row, but maintain 
+* centering of the Submit buttom we add a spacer on the
+* far side of the submit button that is the same width
+* as the 'hint' button. This pushes the Submit button
+* back equal ammounts from the right, restoring center.
+*/
+.btn-hint,
+.flex-spacer-small {
+  flex: 0.1;
+  margin-right: 20px;
 }

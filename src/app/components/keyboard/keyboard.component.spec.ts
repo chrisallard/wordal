@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { KeyboardComponent } from './keyboard.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { KeyboardBtnComponent } from '@components/keyboard/keyboard-btn/keyboard-btn.component';
+import { KeyboardComponent } from '@components/keyboard/keyboard.component';
 
 describe('KeyboardComponent', () => {
   let component: KeyboardComponent;
@@ -8,9 +9,9 @@ describe('KeyboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ KeyboardComponent ]
-    })
-    .compileComponents();
+      imports: [BrowserAnimationsModule],
+      declarations: [KeyboardComponent, KeyboardBtnComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

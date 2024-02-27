@@ -1,7 +1,12 @@
 <div class="keyboard-container">
   <div aria-label="keyboard" class="keyboard" role="group">
     <ng-container
-      *ngFor="let rows of keyboard; trackBy: rowTracker; let i = index"
+      *ngFor="
+        let rows of keyboard;
+        trackBy: rowTracker;
+        let i = index;
+        last as isLast
+      "
     >
       <div class="key-row">
         <!-- creates an indent on the second keyboard row -->
@@ -12,6 +17,7 @@
             [isActive]="key.value === activeKey"
             [isDisabled]="isBoardLocked"
             [class]="{
+              'btn-hint': key.value === specialKeys.hint,
               'btn-submit': key.value === specialKeys.enter,
               'btn-backspace': key.value === specialKeys.backspace
             }"
@@ -21,6 +27,7 @@
         </ng-container>
         <!-- creates an indent on the second keyboard row -->
         <div class="flex-spacer" *ngIf="i === 1"></div>
+        <div class="flex-spacer-small" *ngIf="isLast"></div>
       </div>
     </ng-container>
   </div>

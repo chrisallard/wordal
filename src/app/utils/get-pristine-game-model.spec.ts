@@ -8,20 +8,26 @@ describe('getPristineGameModel', () => {
         guesses: [
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
         ],
+        isActiveRound: false,
         isInvalidWord: false,
         isRoundComplete: false,
         isWinningRound: false,
@@ -31,20 +37,26 @@ describe('getPristineGameModel', () => {
         guesses: [
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
         ],
+        isActiveRound: false,
         isInvalidWord: false,
         isRoundComplete: false,
         isWinningRound: false,
@@ -54,20 +66,26 @@ describe('getPristineGameModel', () => {
         guesses: [
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
         ],
+        isActiveRound: false,
         isInvalidWord: false,
         isRoundComplete: false,
         isWinningRound: false,
@@ -77,20 +95,26 @@ describe('getPristineGameModel', () => {
         guesses: [
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
         ],
+        isActiveRound: false,
         isInvalidWord: false,
         isRoundComplete: false,
         isWinningRound: false,
@@ -100,20 +124,26 @@ describe('getPristineGameModel', () => {
         guesses: [
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
         ],
+        isActiveRound: false,
         isInvalidWord: false,
         isRoundComplete: false,
         isWinningRound: false,
@@ -123,20 +153,26 @@ describe('getPristineGameModel', () => {
         guesses: [
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
           {
             isActive: false,
+            hasRevealedHint: false,
           },
         ],
+        isActiveRound: false,
         isInvalidWord: false,
         isRoundComplete: false,
         isWinningRound: false,
