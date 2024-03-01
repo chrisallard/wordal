@@ -48,7 +48,8 @@ $cursor-height: 4vh;
   }
 }
 
-.tile {
+.tile,
+.hint {
   align-items: center;
   display: flex;
   font-size: 4vh;
