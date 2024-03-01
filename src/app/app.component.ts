@@ -371,7 +371,7 @@ export class AppComponent implements OnInit {
 
   private _captureHintUsage(): void {
     this._analyticsSvc.gaCaptureAnalyticsEvent({
-      eventAction: 'hints used',
+      eventName: 'hints_used',
       eventValue: GameParamsEnum.NumHints - this._numHintsRemaining,
     });
   }
