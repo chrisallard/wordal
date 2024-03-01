@@ -324,6 +324,7 @@ export class AppComponent implements OnInit {
             : getSuccessMessage(numRound),
         })
         .onHidden.subscribe(() => {
+          this._captureHintUsage();
           this._showSummaryModal();
         });
 
@@ -341,6 +342,7 @@ export class AppComponent implements OnInit {
         this.isBoardLocked = false;
       } else {
         // final round and the user lost
+        this._captureHintUsage();
         this._showSummaryModal();
       }
     }
@@ -366,6 +368,13 @@ export class AppComponent implements OnInit {
 
   roundTrackBy = (index: number): number => index;
   tileTrackBy = (index: number): number => index;
+
+  private _captureHintUsage(): void {
+    this._analyticsSvc.gaCaptureAnalyticsEvent({
+      eventAction: 'hints used',
+      eventValue: GameParamsEnum.NumHints - this._numHintsRemaining,
+    });
+  }
 
   private _confirmNewGameRequest(): void {
     const gaEventConfig = {
