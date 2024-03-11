@@ -53,12 +53,7 @@ export class SummaryComponent
   }
 
   showStats(): void {
-    this._analytics.gaCaptureAnalyticsEvent({
-      eventAction: 'modal open',
-      eventCategory: 'summary-modal',
-      eventLabel: ModalNameEnum.Stats,
-      eventName: 'navigation',
-    });
+    this._analytics.gaCaptureModalOpen(ModalNameEnum.Stats);
 
     this._modalSvc.openModal(
       ModalNameEnum.Stats,

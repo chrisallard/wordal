@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ModalNameEnum } from '@app/ts/enums';
 import { environment } from 'src/environments/environment';
 
 declare let gtag: Function;
@@ -7,38 +8,23 @@ declare let gtag: Function;
   providedIn: 'root',
 })
 export class GoogleAnalyticsService {
-  gaCaptureAnalyticsEvent({
-    eventName,
-    eventCategory,
-    eventAction,
-    eventLabel,
-    eventValue,
-  }: {
-    eventName?: string;
-    eventCategory?: string;
-    eventAction?: string;
-    eventLabel?: string | null;
-    eventValue?: number | null;
-  }) {
+  gaCaptureAnalyticsEvent(eventName: string, eventParams: object = {}) {
     // only broadcast events in prod
     if (!environment.production) {
       return;
     }
 
-    if (!eventName) {
-      return console.warn('No analytics event name provided.');
-    }
-
     // safety net in case that the global 'gtag' isn't registered
     try {
-      gtag('event', eventName, {
-        eventAction,
-        eventCategory,
-        eventLabel,
-        eventValue,
-      });
+      gtag('event', eventName, eventParams);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  gaCaptureModalOpen(modal_name: ModalNameEnum) {
+    this.gaCaptureAnalyticsEvent('modal_open', {
+      modal_name,
+    });
   }
 }

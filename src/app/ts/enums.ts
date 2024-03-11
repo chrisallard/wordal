@@ -26,6 +26,7 @@ export enum ModalNameEnum {
   Definition = 'definition',
   Donation = 'donation',
   Instructions = 'instructions',
+  SideMenu = 'menu',
   Settings = 'settings',
   Stats = 'extended stats',
   Summary = 'summary',
