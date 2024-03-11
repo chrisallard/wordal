@@ -147,9 +147,8 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(): void {
-    this._analyticsSvc.gaCaptureAnalyticsEvent({
-      eventName: 'num_session_plays',
-      eventValue: this._numPlayedSession,
+    this._analyticsSvc.gaCaptureAnalyticsEvent('exiting_site', {
+      num_session_plays: this._numPlayedSession,
     });
   }
 
@@ -350,15 +349,11 @@ export class AppComponent implements OnInit {
 
   openNav(): void {
     this.isNavOpen = true;
-
-    this._analyticsSvc.gaCaptureAnalyticsEvent({
-      eventAction: 'nav open',
-      eventName: 'navigation',
-      eventCategory: 'side-nav',
-    });
+    this._analyticsSvc.gaCaptureModalOpen(ModalNameEnum.SideMenu);
   }
 
   openSettings(): void {
+    this._analyticsSvc.gaCaptureModalOpen(ModalNameEnum.Settings);
     this._modalSvc.openModal(ModalNameEnum.Settings);
   }
 
@@ -370,23 +365,13 @@ export class AppComponent implements OnInit {
   tileTrackBy = (index: number): number => index;
 
   private _captureHintUsage(): void {
-    this._analyticsSvc.gaCaptureAnalyticsEvent({
-      eventName: 'hints_used',
-      eventValue: GameParamsEnum.NumHints - this._numHintsRemaining,
+    this._analyticsSvc.gaCaptureAnalyticsEvent('hint_usage', {
+      num_hints_used: GameParamsEnum.NumHints - this._numHintsRemaining,
     });
   }
 
   private _confirmNewGameRequest(): void {
-    const gaEventConfig = {
-      eventName: 'new_game_request',
-      eventCategory: 'user-request',
-      eventLabel: 'new-game',
-    };
-
-    this._analyticsSvc.gaCaptureAnalyticsEvent({
-      ...gaEventConfig,
-      eventLabel: 'open-dialgue',
-    });
+    this._analyticsSvc.gaCaptureModalOpen(ModalNameEnum.Confirm);
 
     this._modalSvc
       .openModal(ModalNameEnum.Confirm, {
@@ -394,18 +379,12 @@ export class AppComponent implements OnInit {
         message: NewGamePromptEnum.Message,
       })
       .subscribe((wantsNewGame: boolean | undefined) => {
-        if (wantsNewGame) {
-          this._analyticsSvc.gaCaptureAnalyticsEvent({
-            ...gaEventConfig,
-            eventLabel: 'confirmed',
-          });
+        this._analyticsSvc.gaCaptureAnalyticsEvent('new_game_request', {
+          new_game_started: wantsNewGame,
+        });
 
+        if (wantsNewGame) {
           this._newGame();
-        } else {
-          this._analyticsSvc.gaCaptureAnalyticsEvent({
-            ...gaEventConfig,
-            eventLabel: 'dismissed',
-          });
         }
       });
   }
@@ -496,6 +475,9 @@ export class AppComponent implements OnInit {
     const gameTime = calcElapsedTime(this._gameStartTime, Date.now());
     this._gameDuration = gameTime.readableTime;
     this._isFastestTime = this._storageSvc.saveGameTime(gameTime);
+    this._analyticsSvc.gaCaptureAnalyticsEvent('game_duration', {
+      total_game_time: this._gameDuration,
+    });
   }
 
   private _setCursorToFirstPos(): void {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { API_TIMEOUT_DURATION } from '@app/config/app.config';
 import { GoogleAnalyticsService } from '@app/services/analytics/google-analytics.service';
 import { VerifyWordService } from '@app/services/verify-word/verify-word.service';
+import { ModalNameEnum } from '@app/ts/enums';
 import { IDictionaryItem, IWord } from '@app/ts/interfaces';
 import { SimpleModalComponent } from 'ngx-simple-modal';
 
@@ -28,12 +29,7 @@ export class DefinitionComponent
   }
 
   ngOnInit(): void {
-    this._analyticsSvc.gaCaptureAnalyticsEvent({
-      eventName: 'view-definition',
-      eventAction: 'user-request',
-      eventCategory: 'show-definition',
-      eventLabel: 'opened',
-    });
+    this._analyticsSvc.gaCaptureModalOpen(ModalNameEnum.Definition);
 
     let didApiRespond = false;
 

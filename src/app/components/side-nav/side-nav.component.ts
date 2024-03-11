@@ -61,12 +61,7 @@ export class SideNavComponent implements OnChanges {
   }
 
   openModal(modalName: ModalNameEnum, args?: object): void {
-    this._analytics.gaCaptureAnalyticsEvent({
-      eventAction: 'modal open',
-      eventCategory: 'side-nav',
-      eventLabel: modalName,
-      eventName: 'navigation',
-    });
+    this._analytics.gaCaptureModalOpen(modalName);
     this._modalSvc.openModal(modalName, args);
   }
 }
