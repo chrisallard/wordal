@@ -2,6 +2,7 @@ import { AnimationEvent, trigger } from '@angular/animations';
 import {
   Component,
   EventEmitter,
+  HostListener,
   Input,
   OnChanges,
   Output,
@@ -16,7 +17,7 @@ import {
 import { SIDE_NAV_BODY_CLASS } from '@app/config/app.config';
 import { GoogleAnalyticsService } from '@app/services/analytics/google-analytics.service';
 import { ModalService } from '@app/services/modal/modal.service';
-import { ModalNameEnum } from '@app/ts/enums';
+import { ModalNameEnum, SpecialKeysEnum } from '@app/ts/enums';
 
 @Component({
   selector: 'app-side-nav',
@@ -26,7 +27,7 @@ import { ModalNameEnum } from '@app/ts/enums';
 })
 export class SideNavComponent implements OnChanges {
   @Input() isOpen: boolean = false;
-  @Output() closed = new EventEmitter<boolean>();
+  @Output() closed = new EventEmitter();
 
   modalName = { ...ModalNameEnum };
   sideNavWidth = `${navWidth}px`;
@@ -50,13 +51,18 @@ export class SideNavComponent implements OnChanges {
     }
   }
 
+  @HostListener('document:keyup', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    this.isOpen = !(event.key.toLowerCase() === SpecialKeysEnum.Esc);
+  }
+
   sideNavClosed(event: AnimationEvent): void {
     if (
       event.toState === this.state.closed &&
       event.fromState === this.state.open
     ) {
       this._renderer.removeClass(document.body, SIDE_NAV_BODY_CLASS);
-      this.closed.emit(true);
+      this.closed.emit();
     }
   }
 
