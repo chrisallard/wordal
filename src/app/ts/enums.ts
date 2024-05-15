@@ -51,6 +51,7 @@ export enum SpecialKeysEnum {
   Refresh_Label = 'new game',
   Submit = 'submit',
   Tab = 'tab',
+  Esc = 'escape',
 }
 
 export enum SettingsTypeEnum {
