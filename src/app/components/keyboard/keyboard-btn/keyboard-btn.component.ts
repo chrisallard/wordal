@@ -23,11 +23,13 @@ export class KeyboardBtnComponent implements OnInit {
   ngOnInit(): void {
     const key = this.key.value;
 
-    this.isIconKey =
-      key === SpecialKeysEnum.Refresh || key === SpecialKeysEnum.Backspace;
-
     this.isHintKey = key === SpecialKeysEnum.Hint;
     this.isEnterKey = key === SpecialKeysEnum.Enter;
+
+    this.isIconKey =
+      key === SpecialKeysEnum.Refresh ||
+      key === SpecialKeysEnum.Backspace ||
+      this.isHintKey;
   }
 
   keyPress(): void {
