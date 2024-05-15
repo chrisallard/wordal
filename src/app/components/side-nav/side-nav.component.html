@@ -20,19 +20,21 @@
         </div>
       </div>
 
-      <ul class="nav-list">
-        <li class="nav-item">
+      <div class="nav-list">
+        <div class="nav-item">
           <button
             class="nav-btn"
             tabindex="0"
             type="buttton"
             (click)="openModal(modalName.Instructions)"
           >
-            <span class="material-symbols-outlined nav-icon">help</span>
+            <span class="material-symbols-outlined nav-icon" aria-hidden="true"
+              >help</span
+            >
             <span class="nav-item-title">How to Play</span>
           </button>
-        </li>
-        <li class="nav-item">
+        </div>
+        <div class="nav-item">
           <button
             class="nav-btn"
             tabindex="0"
@@ -43,33 +45,39 @@
               })
             "
           >
-            <span class="material-symbols-outlined nav-icon">insights</span>
+            <span class="material-symbols-outlined nav-icon" aria-hidden="true"
+              >insights</span
+            >
             <span class="nav-item-title">Statistics</span>
           </button>
-        </li>
-        <li class="nav-item">
+        </div>
+        <div class="nav-item">
           <button
             class="nav-btn"
             tabindex="0"
             type="buttton"
             (click)="openModal(modalName.Donation, donationMsg)"
           >
-            <span class="material-symbols-outlined nav-icon">coffee</span>
+            <span class="material-symbols-outlined nav-icon" aria-hidden="true"
+              >coffee</span
+            >
             <span class="nav-item-title">Buy Me a Coffee</span>
           </button>
-        </li>
-        <li class="nav-item">
+        </div>
+        <div class="nav-item">
           <button
             class="nav-btn"
             tabindex="0"
             type="buttton"
             (click)="openModal(modalName.About)"
           >
-            <span class="material-symbols-outlined nav-icon">info</span>
+            <span class="material-symbols-outlined nav-icon" aria-hidden="true"
+              >info</span
+            >
             <span class="nav-item-title">About Wordal</span>
           </button>
-        </li>
-      </ul>
+        </div>
+      </div>
       <a
         class="github-link"
         href="https://github.com/chrisallard/wordal"
