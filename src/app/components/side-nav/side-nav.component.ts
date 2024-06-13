@@ -53,7 +53,9 @@ export class SideNavComponent implements OnChanges {
 
   @HostListener('document:keyup', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent): void {
-    this.isOpen = !(event.key.toLowerCase() === SpecialKeysEnum.Esc);
+    if (event.key.toLowerCase() === SpecialKeysEnum.Esc && this.isOpen) {
+      this.isOpen = false;
+    }
   }
 
   sideNavClosed(event: AnimationEvent): void {
